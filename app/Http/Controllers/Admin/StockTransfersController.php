@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\StockTransfer;
 
-class StockTransfersController extends BaseCrudController
+class StockTransfersController extends SchemaResourceController
 {
     protected string $modelClass = StockTransfer::class;
     protected string $viewPrefix = 'admin.stock_transfers';
@@ -24,13 +24,4 @@ class StockTransfersController extends BaseCrudController
             ['data' => 'status', 'name' => 'status', 'title' => __('admin.field.status')],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

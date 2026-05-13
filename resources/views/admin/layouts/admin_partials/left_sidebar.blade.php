@@ -55,9 +55,12 @@
             </a>
             <ul>
                 <li><a href="{{ route('admin.sale_invoices.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.sale_invoices">{{ __('admin.menu.sale_invoices') }}</span></a></li>
+                <li><a href="{{ route('admin.sale_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.sale_items">{{ __('admin.menu.sale_items') }}</span></a></li>
                 <li><a href="{{ route('admin.sale_payments.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.sale_payments">{{ __('admin.menu.sale_payments') }}</span></a></li>
                 <li><a href="{{ route('admin.sale_returns.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.sale_returns">{{ __('admin.menu.sale_returns') }}</span></a></li>
+                <li><a href="{{ route('admin.sale_return_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.sale_return_items">{{ __('admin.menu.sale_return_items') }}</span></a></li>
                 <li><a href="{{ route('admin.quotations.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.quotations">{{ __('admin.menu.quotations') }}</span></a></li>
+                <li><a href="{{ route('admin.quotation_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.quotation_items">{{ __('admin.menu.quotation_items') }}</span></a></li>
             </ul>
         </li>
 
@@ -68,8 +71,10 @@
             </a>
             <ul>
                 <li><a href="{{ route('admin.purchase_invoices.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.purchase_invoices">{{ __('admin.menu.purchase_invoices') }}</span></a></li>
+                <li><a href="{{ route('admin.purchase_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.purchase_items">{{ __('admin.menu.purchase_items') }}</span></a></li>
                 <li><a href="{{ route('admin.purchase_payments.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.purchase_payments">{{ __('admin.menu.purchase_payments') }}</span></a></li>
                 <li><a href="{{ route('admin.purchase_returns.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.purchase_returns">{{ __('admin.menu.purchase_returns') }}</span></a></li>
+                <li><a href="{{ route('admin.purchase_return_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.purchase_return_items">{{ __('admin.menu.purchase_return_items') }}</span></a></li>
             </ul>
         </li>
 
@@ -79,8 +84,12 @@
                 <div class="menu-title" data-i18n="menu.inventory">{{ __('admin.menu.inventory') }}</div>
             </a>
             <ul>
+                <li><a href="{{ route('admin.stock_balances.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_balances">{{ __('admin.menu.stock_balances') }}</span></a></li>
+                <li><a href="{{ route('admin.stock_movements.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_movements">{{ __('admin.menu.stock_movements') }}</span></a></li>
                 <li><a href="{{ route('admin.stock_transfers.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_transfers">{{ __('admin.menu.stock_transfers') }}</span></a></li>
+                <li><a href="{{ route('admin.stock_transfer_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_transfer_items">{{ __('admin.menu.stock_transfer_items') }}</span></a></li>
                 <li><a href="{{ route('admin.stock_adjustments.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_adjustments">{{ __('admin.menu.stock_adjustments') }}</span></a></li>
+                <li><a href="{{ route('admin.stock_adjustment_items.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.stock_adjustment_items">{{ __('admin.menu.stock_adjustment_items') }}</span></a></li>
                 <li><a href="{{ route('admin.damaged_stocks.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.damaged_stocks">{{ __('admin.menu.damaged_stocks') }}</span></a></li>
             </ul>
         </li>
@@ -92,6 +101,7 @@
             </a>
             <ul>
                 <li><a href="{{ route('admin.deliveries.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.deliveries">{{ __('admin.menu.deliveries') }}</span></a></li>
+                <li><a href="{{ route('admin.delivery_proofs.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.delivery_proofs">{{ __('admin.menu.delivery_proofs') }}</span></a></li>
                 <li><a href="{{ route('admin.drivers.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.drivers">{{ __('admin.menu.drivers') }}</span></a></li>
                 <li><a href="{{ route('admin.vehicles.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.vehicles">{{ __('admin.menu.vehicles') }}</span></a></li>
                 <li><a href="{{ route('admin.vehicle_expenses.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.vehicle_expenses">{{ __('admin.menu.vehicle_expenses') }}</span></a></li>
@@ -107,7 +117,9 @@
                 <li><a href="{{ route('admin.expenses.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.expenses">{{ __('admin.menu.expenses') }}</span></a></li>
                 <li><a href="{{ route('admin.expense_categories.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.expense_categories">{{ __('admin.menu.expense_categories') }}</span></a></li>
                 <li><a href="{{ route('admin.customer_ledger.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.customer_ledger">{{ __('admin.menu.customer_ledger') }}</span></a></li>
+                <li><a href="{{ route('admin.customer_ledger_entries.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.customer_ledger_entries">{{ __('admin.menu.customer_ledger_entries') }}</span></a></li>
                 <li><a href="{{ route('admin.supplier_ledger.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.supplier_ledger">{{ __('admin.menu.supplier_ledger') }}</span></a></li>
+                <li><a href="{{ route('admin.supplier_ledger_entries.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.supplier_ledger_entries">{{ __('admin.menu.supplier_ledger_entries') }}</span></a></li>
             </ul>
         </li>
 
@@ -138,9 +150,13 @@
                 <li><a href="{{ route('admin.users.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.users">{{ __('admin.menu.users') }}</span></a></li>
                 <li><a href="{{ route('admin.roles.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.roles">{{ __('admin.menu.roles') }}</span></a></li>
                 <li><a href="{{ route('admin.permissions.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.permissions">{{ __('admin.menu.permissions') }}</span></a></li>
+                <li><a href="{{ route('admin.role_permissions.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.role_permissions">{{ __('admin.menu.role_permissions') }}</span></a></li>
+                <li><a href="{{ route('admin.user_branch_roles.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.user_branch_roles">{{ __('admin.menu.user_branch_roles') }}</span></a></li>
                 <li><a href="{{ route('admin.system_settings.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.system_settings">{{ __('admin.menu.system_settings') }}</span></a></li>
                 <li><a href="{{ route('admin.number_sequences.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.number_sequences">{{ __('admin.menu.number_sequences') }}</span></a></li>
                 <li><a href="{{ route('admin.document_templates.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.document_templates">{{ __('admin.menu.document_templates') }}</span></a></li>
+                <li><a href="{{ route('admin.notifications.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.notifications">{{ __('admin.menu.notifications') }}</span></a></li>
+                <li><a href="{{ route('admin.attachments.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.attachments">{{ __('admin.menu.attachments') }}</span></a></li>
                 <li><a href="{{ route('admin.audit_logs.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.audit_logs">{{ __('admin.menu.audit_logs') }}</span></a></li>
                 <li><a href="{{ route('admin.login_histories.index') }}"><i class="bi bi-arrow-right-short"></i><span data-i18n="menu.login_histories">{{ __('admin.menu.login_histories') }}</span></a></li>
             </ul>

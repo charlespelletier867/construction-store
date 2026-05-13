@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\SaleReturn;
 
-class SaleReturnsController extends BaseCrudController
+class SaleReturnsController extends SchemaResourceController
 {
     protected string $modelClass = SaleReturn::class;
     protected string $viewPrefix = 'admin.sale_returns';
@@ -21,17 +21,8 @@ class SaleReturnsController extends BaseCrudController
         return [
             ['data' => 'return_no', 'name' => 'return_no', 'title' => '#'],
             ['data' => 'return_date', 'name' => 'return_date', 'title' => __('admin.field.date')],
-            ['data' => 'grand_total', 'name' => 'grand_total', 'title' => __('admin.field.total')],
+            ['data' => 'refund_amount', 'name' => 'refund_amount', 'title' => __('admin.field.total')],
             ['data' => 'status', 'name' => 'status', 'title' => __('admin.field.status')],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

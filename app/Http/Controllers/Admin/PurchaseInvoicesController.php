@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\PurchaseInvoice;
 
-class PurchaseInvoicesController extends BaseCrudController
+class PurchaseInvoicesController extends SchemaResourceController
 {
     protected string $modelClass = PurchaseInvoice::class;
     protected string $viewPrefix = 'admin.purchase_invoices';
@@ -27,13 +27,4 @@ class PurchaseInvoicesController extends BaseCrudController
             ['data' => 'payment_status', 'name' => 'payment_status', 'title' => __('admin.field.status')],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

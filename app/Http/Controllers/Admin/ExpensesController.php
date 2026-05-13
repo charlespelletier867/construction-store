@@ -22,7 +22,7 @@ class ExpensesController extends BaseCrudController
             ['data' => 'expense_no', 'name' => 'expense_no', 'title' => '#'],
             ['data' => 'expense_date', 'name' => 'expense_date', 'title' => __('admin.field.date')],
             ['data' => 'amount', 'name' => 'amount', 'title' => __('admin.field.amount')],
-            ['data' => 'description', 'name' => 'description', 'title' => __('admin.field.description')],
+            ['data' => 'note', 'name' => 'note', 'title' => __('admin.field.note')],
         ];
     }
 
@@ -34,7 +34,8 @@ class ExpensesController extends BaseCrudController
             ['name' => 'expense_category_id', 'type' => 'select', 'label' => 'Category', 'options' => \App\Models\ExpenseCategory::query()->orderBy('name')->pluck('name', 'id')->toArray(), 'col' => 4],
             ['name' => 'branch_id', 'type' => 'select', 'label' => __('admin.field.branch'), 'options' => \App\Models\Branch::query()->orderBy('name')->pluck('name', 'id')->toArray(), 'required' => true, 'col' => 6, 'rules' => ['required', 'integer', 'exists:branches,id']],
             ['name' => 'amount', 'type' => 'number', 'label' => __('admin.field.amount'), 'required' => true, 'col' => 6, 'rules' => ['required', 'numeric', 'min:0']],
-            ['name' => 'description', 'type' => 'textarea', 'label' => __('admin.field.description'), 'col' => 12],
+            ['name' => 'receipt_path', 'type' => 'text', 'label' => 'Receipt Path', 'col' => 6],
+            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
         ];
     }
 }
