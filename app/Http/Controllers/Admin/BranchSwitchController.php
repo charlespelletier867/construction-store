@@ -25,7 +25,7 @@ class BranchSwitchController extends Controller
         $request->session()->put('current_branch_id', $branch->id);
         $request->session()->put('current_branch_name', $branch->name);
 
-        flash()->success(__('admin.alert.updated'), __('admin.menu.branch'));
+        flash()->success(__('admin.alert.updated') . ': ' . __('admin.menu.branch'));
 
         return back();
     }

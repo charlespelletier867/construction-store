@@ -119,29 +119,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Confirm-delete forms
-    document.querySelectorAll('form.confirm-delete').forEach((form) => {
-        form.addEventListener('submit', (e) => {
-            if (form.dataset.confirmed === 'true') return;
-            e.preventDefault();
-            Swal.fire({
-                title: i18n.global.t('alert.delete_title', 'Are you sure?'),
-                text: i18n.global.t('alert.delete_text', 'This action cannot be undone.'),
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: i18n.global.t('alert.delete_confirm', 'Yes, delete it!'),
-                cancelButtonText: i18n.global.t('alert.cancel', 'Cancel'),
-                confirmButtonColor: '#d33',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    form.dataset.confirmed = 'true';
-                    form.submit();
-                }
-            });
-        });
-    });
-
     applyDomTranslations(initialLocale);
+});
+
+// Confirm-delete via event delegation (handles DataTables-rendered rows too)
+document.addEventListener('submit', (e) => {
+    const form = e.target.closest('form.confirm-delete');
+    if (!form) return;
+    if (form.dataset.confirmed === 'true') return;
+    e.preventDefault();
+    Swal.fire({
+        title: i18n.global.t('alert.delete_title', 'Are you sure?'),
+        text: i18n.global.t('alert.delete_text', 'This action cannot be undone.'),
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: i18n.global.t('alert.delete_confirm', 'Yes, delete it!'),
+        cancelButtonText: i18n.global.t('alert.cancel', 'Cancel'),
+        confirmButtonColor: '#d33',
+    }).then((result) => {
+        if (result.isConfirmed) {
+            form.dataset.confirmed = 'true';
+            form.submit();
+        }
+    });
 });
 
 // Inertia setup (mount only if the SSR root is present)
