@@ -19,7 +19,7 @@ class NumberSequencesController extends BaseCrudController
     protected function tableColumns(): array
     {
         return [
-            ['data' => 'key', 'name' => 'key', 'title' => 'Key'],
+            ['data' => 'document_type', 'name' => 'document_type', 'title' => 'Document Type'],
             ['data' => 'prefix', 'name' => 'prefix', 'title' => 'Prefix'],
             ['data' => 'next_number', 'name' => 'next_number', 'title' => 'Next #'],
         ];
@@ -28,10 +28,12 @@ class NumberSequencesController extends BaseCrudController
     protected function formFields(): array
     {
         return [
-            ['name' => 'key', 'type' => 'text', 'label' => 'Key', 'required' => true, 'col' => 4, 'rules' => ['required', 'string']],
+            ['name' => 'document_type', 'type' => 'text', 'label' => 'Document Type', 'required' => true, 'col' => 4, 'rules' => ['required', 'string']],
             ['name' => 'prefix', 'type' => 'text', 'label' => 'Prefix', 'col' => 4],
+            ['name' => 'date_format', 'type' => 'text', 'label' => 'Date Format', 'col' => 4],
             ['name' => 'padding', 'type' => 'number', 'label' => 'Padding', 'col' => 4, 'default' => 4],
             ['name' => 'next_number', 'type' => 'number', 'label' => 'Next Number', 'col' => 4, 'default' => 1],
+            ['name' => 'suffix', 'type' => 'text', 'label' => 'Suffix', 'col' => 4],
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Quotation;
 
-class QuotationsController extends BaseCrudController
+class QuotationsController extends SchemaResourceController
 {
     protected string $modelClass = Quotation::class;
     protected string $viewPrefix = 'admin.quotations';
@@ -25,13 +25,4 @@ class QuotationsController extends BaseCrudController
             ['data' => 'status', 'name' => 'status', 'title' => __('admin.field.status')],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

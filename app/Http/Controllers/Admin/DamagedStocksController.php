@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\DamagedStock;
 
-class DamagedStocksController extends BaseCrudController
+class DamagedStocksController extends SchemaResourceController
 {
     protected string $modelClass = DamagedStock::class;
     protected string $viewPrefix = 'admin.damaged_stocks';
@@ -19,18 +19,9 @@ class DamagedStocksController extends BaseCrudController
     protected function tableColumns(): array
     {
         return [
-            ['data' => 'damaged_no', 'name' => 'damaged_no', 'title' => '#'],
-            ['data' => 'damaged_date', 'name' => 'damaged_date', 'title' => __('admin.field.date')],
+            ['data' => 'damage_no', 'name' => 'damage_no', 'title' => '#'],
+            ['data' => 'damage_date', 'name' => 'damage_date', 'title' => __('admin.field.date')],
             ['data' => 'quantity', 'name' => 'quantity', 'title' => __('admin.field.quantity')],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

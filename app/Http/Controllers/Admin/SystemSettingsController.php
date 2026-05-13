@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\SystemSetting;
 
-class SystemSettingsController extends BaseCrudController
+class SystemSettingsController extends SchemaResourceController
 {
     protected string $modelClass = SystemSetting::class;
     protected string $viewPrefix = 'admin.system_settings';
@@ -24,13 +24,4 @@ class SystemSettingsController extends BaseCrudController
             ['data' => 'group', 'name' => 'group', 'title' => 'Group'],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

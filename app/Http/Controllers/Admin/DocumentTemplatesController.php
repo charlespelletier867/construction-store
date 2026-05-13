@@ -20,7 +20,7 @@ class DocumentTemplatesController extends BaseCrudController
     {
         return [
             ['data' => 'name', 'name' => 'name', 'title' => __('admin.field.name')],
-            ['data' => 'document_type', 'name' => 'document_type', 'title' => 'Type'],
+            ['data' => 'template_type', 'name' => 'template_type', 'title' => 'Type'],
         ];
     }
 
@@ -28,8 +28,12 @@ class DocumentTemplatesController extends BaseCrudController
     {
         return [
             ['name' => 'name', 'type' => 'text', 'label' => __('admin.field.name'), 'required' => true, 'col' => 6, 'rules' => ['required', 'string']],
-            ['name' => 'document_type', 'type' => 'text', 'label' => 'Type', 'required' => true, 'col' => 6, 'rules' => ['required', 'string']],
-            ['name' => 'content', 'type' => 'textarea', 'label' => 'Content (HTML)', 'col' => 12],
+            ['name' => 'template_type', 'type' => 'text', 'label' => 'Type', 'required' => true, 'col' => 6, 'rules' => ['required', 'string']],
+            ['name' => 'paper_size', 'type' => 'text', 'label' => 'Paper Size', 'col' => 4, 'default' => 'A4'],
+            ['name' => 'header', 'type' => 'textarea', 'label' => 'Header', 'col' => 12],
+            ['name' => 'footer', 'type' => 'textarea', 'label' => 'Footer', 'col' => 12],
+            ['name' => 'is_default', 'type' => 'checkbox', 'label' => 'Default', 'col' => 4],
+            ['name' => 'is_active', 'type' => 'checkbox', 'label' => __('admin.field.active'), 'col' => 4, 'default' => 1],
         ];
     }
 }

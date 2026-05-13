@@ -33,7 +33,6 @@ class DriversController extends BaseCrudController
             ['name' => 'name', 'type' => 'text', 'required' => true, 'col' => 8, 'rules' => ['required', 'string', 'max:255']],
             ['name' => 'phone', 'type' => 'tel', 'col' => 4],
             ['name' => 'license_no', 'type' => 'text', 'label' => 'License No', 'col' => 4],
-            ['name' => 'license_expiry_date', 'type' => 'date', 'label' => 'License Expiry', 'col' => 4],
             ['name' => 'address', 'type' => 'textarea', 'col' => 12],
             ['name' => 'is_active', 'type' => 'checkbox', 'label' => __('admin.field.active'), 'col' => 6, 'default' => 1],
         ];

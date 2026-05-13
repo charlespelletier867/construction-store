@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class UsersController extends BaseCrudController
 {
@@ -39,5 +42,31 @@ class UsersController extends BaseCrudController
             ['name' => 'is_active', 'type' => 'checkbox', 'label' => __('admin.field.active'), 'col' => 3, 'default' => 1],
             ['name' => 'can_view_money', 'type' => 'checkbox', 'label' => 'Can View Money', 'col' => 3],
         ];
+    }
+
+    protected function validationRules(?Model $instance = null): array
+    {
+        $rules = parent::validationRules($instance);
+        $rules['password'] = $instance?->exists
+            ? ['nullable', 'string', 'min:6']
+            : ['required', 'string', 'min:6'];
+
+        return $rules;
+    }
+
+    public function update(Request $request, int $id): RedirectResponse
+    {
+        $model = $this->modelClass::findOrFail($id);
+        $data = $request->validate($this->validationRules($model));
+
+        if (blank($data['password'] ?? null)) {
+            unset($data['password']);
+        }
+
+        $model->update($data);
+        $this->afterSave($model, $request);
+        flash()->success(__('admin.alert.updated'));
+
+        return redirect()->route("{$this->routePrefix}.index");
     }
 }

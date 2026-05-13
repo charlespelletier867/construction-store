@@ -19,17 +19,19 @@ class LoginHistoriesController extends BaseCrudController
     protected function tableColumns(): array
     {
         return [
-            ['data' => 'login_at', 'name' => 'login_at', 'title' => 'Login At'],
+            ['data' => 'logged_in_at', 'name' => 'logged_in_at', 'title' => 'Login At'],
             ['data' => 'ip_address', 'name' => 'ip_address', 'title' => 'IP'],
-            ['data' => 'status', 'name' => 'status', 'title' => __('admin.field.status')],
+            ['data' => 'is_successful', 'name' => 'is_successful', 'title' => __('admin.field.status')],
         ];
     }
 
     protected function formFields(): array
     {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
         return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
+            ['name' => 'email', 'type' => 'email', 'label' => __('admin.field.email'), 'col' => 6],
+            ['name' => 'ip_address', 'type' => 'text', 'label' => 'IP', 'col' => 6],
+            ['name' => 'is_successful', 'type' => 'checkbox', 'label' => __('admin.field.status'), 'col' => 6],
+            ['name' => 'failure_reason', 'type' => 'textarea', 'label' => 'Failure Reason', 'col' => 12],
         ];
     }
 

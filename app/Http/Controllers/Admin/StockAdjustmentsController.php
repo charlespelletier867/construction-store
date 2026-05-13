@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\StockAdjustment;
 
-class StockAdjustmentsController extends BaseCrudController
+class StockAdjustmentsController extends SchemaResourceController
 {
     protected string $modelClass = StockAdjustment::class;
     protected string $viewPrefix = 'admin.stock_adjustments';
@@ -24,13 +24,4 @@ class StockAdjustmentsController extends BaseCrudController
             ['data' => 'reason', 'name' => 'reason', 'title' => 'Reason'],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

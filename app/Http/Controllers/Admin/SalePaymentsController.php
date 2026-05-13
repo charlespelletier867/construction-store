@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\SalePayment;
 
-class SalePaymentsController extends BaseCrudController
+class SalePaymentsController extends SchemaResourceController
 {
     protected string $modelClass = SalePayment::class;
     protected string $viewPrefix = 'admin.sale_payments';
@@ -25,13 +25,4 @@ class SalePaymentsController extends BaseCrudController
             ['data' => 'payment_method', 'name' => 'payment_method', 'title' => 'Method'],
         ];
     }
-
-    protected function formFields(): array
-    {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
-        return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
-        ];
-    }
-
 }

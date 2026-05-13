@@ -59,10 +59,31 @@ abstract class BaseCrudController extends Controller
             if (! empty($field['rules'])) {
                 $rules[$field['name']] = $field['rules'];
             } elseif (! empty($field['required'])) {
-                $rules[$field['name']] = ['required'];
+                $rules[$field['name']] = $this->requiredValidationRulesFor($field);
+            } else {
+                $rules[$field['name']] = $this->defaultValidationRulesFor($field);
             }
         }
         return $rules;
+    }
+
+    protected function requiredValidationRulesFor(array $field): array
+    {
+        return array_values(array_unique(array_map(
+            fn (string $rule) => $rule === 'nullable' ? 'required' : $rule,
+            $this->defaultValidationRulesFor($field),
+        )));
+    }
+
+    protected function defaultValidationRulesFor(array $field): array
+    {
+        return match ($field['type'] ?? 'text') {
+            'email' => ['nullable', 'email'],
+            'number' => ['nullable', 'numeric'],
+            'date', 'datetime' => ['nullable', 'date'],
+            'checkbox' => ['nullable', 'boolean'],
+            default => ['nullable'],
+        };
     }
 
     public function index(Request $request)
@@ -126,7 +147,11 @@ abstract class BaseCrudController extends Controller
     public function show(int $id): View
     {
         $instance = $this->modelClass::findOrFail($id);
-        return view("{$this->viewPrefix}.show", [
+        $view = view()->exists("{$this->viewPrefix}.show")
+            ? "{$this->viewPrefix}.show"
+            : 'admin._partials.generic_show';
+
+        return view($view, [
             'instance' => $instance,
             'fields' => $this->formFields(),
             'routePrefix' => $this->routePrefix,

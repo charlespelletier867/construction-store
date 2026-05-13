@@ -28,9 +28,11 @@ class AuditLogsController extends BaseCrudController
 
     protected function formFields(): array
     {
-        // Transactional forms are managed through dedicated UIs; this is a fallback.
         return [
-            ['name' => 'note', 'type' => 'textarea', 'label' => __('admin.field.note'), 'col' => 12],
+            ['name' => 'action', 'type' => 'text', 'label' => 'Action', 'col' => 6],
+            ['name' => 'module', 'type' => 'text', 'label' => 'Module', 'col' => 6],
+            ['name' => 'auditable_type', 'type' => 'text', 'label' => 'Entity', 'col' => 6],
+            ['name' => 'auditable_id', 'type' => 'number', 'label' => 'Entity ID', 'col' => 6],
         ];
     }
 
