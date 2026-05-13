@@ -118,8 +118,9 @@ class DatabaseSeeder extends Seeder
                 'can_view_profit' => true,
                 'is_active' => true,
             ]);
+            $admin->branches()->sync([$branchA->id, $branchB->id]);
 
-            User::create([
+            $cashier = User::create([
                 'company_id' => $company->id,
                 'default_branch_id' => $branchA->id,
                 'role_id' => $cashierRole->id,
@@ -129,6 +130,7 @@ class DatabaseSeeder extends Seeder
                 'password' => Hash::make('password'),
                 'is_active' => true,
             ]);
+            $cashier->branches()->sync([$branchA->id]);
 
             // Master data
             $cementCat = Category::create(['company_id' => $company->id, 'name' => 'Cement', 'code' => 'CEM', 'is_active' => true]);
