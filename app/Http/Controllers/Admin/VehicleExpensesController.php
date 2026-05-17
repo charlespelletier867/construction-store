@@ -28,7 +28,7 @@ class VehicleExpensesController extends BaseCrudController
     protected function formFields(): array
     {
         return [
-            ['name' => 'vehicle_id', 'type' => 'select', 'label' => 'Vehicle', 'options' => \App\Models\Vehicle::query()->orderBy('name')->pluck('name', 'id')->toArray(), 'required' => true, 'col' => 6, 'rules' => ['required', 'integer', 'exists:vehicles,id']],
+            ['name' => 'vehicle_id', 'type' => 'select', 'label' => 'Vehicle', 'options' => \App\Models\Vehicle::query()->orderBy('plate_number')->pluck('plate_number', 'id')->toArray(), 'required' => true, 'col' => 6, 'rules' => ['required', 'integer', 'exists:vehicles,id']],
             ['name' => 'expense_type', 'type' => 'select', 'label' => 'Type', 'options' => ['fuel' => 'Fuel', 'repair' => 'Repair', 'maintenance' => 'Maintenance', 'other' => 'Other'], 'required' => true, 'col' => 6, 'rules' => ['required', 'string']],
             ['name' => 'expense_date', 'type' => 'date', 'label' => __('admin.field.date'), 'required' => true, 'col' => 6, 'rules' => ['required', 'date']],
             ['name' => 'amount', 'type' => 'number', 'label' => __('admin.field.amount'), 'required' => true, 'col' => 6, 'rules' => ['required', 'numeric', 'min:0']],
