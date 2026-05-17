@@ -13,9 +13,9 @@ class StockTransferItem extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'quantity_requested' => 'decimal:4',
-        'quantity_sent' => 'decimal:4',
-        'quantity_received' => 'decimal:4',
+        'requested_quantity' => 'decimal:4',
+        'sent_quantity' => 'decimal:4',
+        'received_quantity' => 'decimal:4',
         'unit_cost' => 'decimal:4',
     ];
 

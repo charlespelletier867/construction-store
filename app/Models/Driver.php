@@ -14,7 +14,6 @@ class Driver extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'license_expiry_date' => 'date',
         'is_active' => 'boolean',
     ];
 

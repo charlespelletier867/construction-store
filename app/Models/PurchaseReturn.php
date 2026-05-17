@@ -17,8 +17,9 @@ class PurchaseReturn extends Model
     protected $casts = [
         'return_date' => 'date',
         'subtotal' => 'decimal:4',
+        'discount_amount' => 'decimal:4',
         'tax_amount' => 'decimal:4',
-        'grand_total' => 'decimal:4',
+        'return_amount' => 'decimal:4',
     ];
 
     public function company(): BelongsTo

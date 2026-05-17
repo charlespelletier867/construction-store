@@ -15,7 +15,8 @@ class DamagedStock extends Model
 
     protected $casts = [
         'quantity' => 'decimal:4',
-        'estimated_loss' => 'decimal:4',
+        'unit_cost' => 'decimal:4',
+        'total_cost' => 'decimal:4',
         'approved_at' => 'datetime',
     ];
 
