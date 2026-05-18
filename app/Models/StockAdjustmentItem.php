@@ -13,9 +13,11 @@ class StockAdjustmentItem extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'quantity_before' => 'decimal:4',
-        'quantity_after' => 'decimal:4',
-        'difference' => 'decimal:4',
+        'system_quantity' => 'decimal:4',
+        'actual_quantity' => 'decimal:4',
+        'difference_quantity' => 'decimal:4',
+        'unit_cost' => 'decimal:4',
+        'total_cost' => 'decimal:4',
     ];
 
     public function adjustment(): BelongsTo

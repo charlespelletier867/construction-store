@@ -13,8 +13,11 @@ class StockMovement extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'quantity' => 'decimal:4',
+        'quantity_in' => 'decimal:4',
+        'quantity_out' => 'decimal:4',
         'unit_cost' => 'decimal:4',
+        'total_cost' => 'decimal:4',
+        'balance_after' => 'decimal:4',
     ];
 
     public function company(): BelongsTo

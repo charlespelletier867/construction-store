@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Branch;
+use App\Models\Brand;
+use App\Models\Category;
 use App\Models\Customer;
 use App\Models\Delivery;
 use App\Models\Driver;
@@ -39,6 +41,9 @@ abstract class SchemaResourceController extends BaseCrudController
         'role_id' => [Role::class, 'name'],
         'permission_id' => [Permission::class, 'name'],
         'user_id' => [User::class, 'name'],
+        'cashier_id' => [User::class, 'name'],
+        'manager_user_id' => [User::class, 'name'],
+        'salesperson_user_id' => [User::class, 'name'],
         'created_by' => [User::class, 'name'],
         'uploaded_by' => [User::class, 'name'],
         'requested_by' => [User::class, 'name'],
@@ -46,12 +51,16 @@ abstract class SchemaResourceController extends BaseCrudController
         'sent_by' => [User::class, 'name'],
         'received_by' => [User::class, 'name'],
         'branch_id' => [Branch::class, 'name'],
+        'default_branch_id' => [Branch::class, 'name'],
         'from_branch_id' => [Branch::class, 'name'],
         'to_branch_id' => [Branch::class, 'name'],
         'warehouse_id' => [Warehouse::class, 'name'],
         'from_warehouse_id' => [Warehouse::class, 'name'],
         'to_warehouse_id' => [Warehouse::class, 'name'],
         'product_id' => [Product::class, 'name'],
+        'category_id' => [Category::class, 'name'],
+        'parent_id' => [Category::class, 'name'],
+        'brand_id' => [Brand::class, 'name'],
         'unit_id' => [Unit::class, 'name'],
         'customer_id' => [Customer::class, 'name'],
         'supplier_id' => [Supplier::class, 'name'],
@@ -240,15 +249,24 @@ abstract class SchemaResourceController extends BaseCrudController
             return 'checkbox';
         }
 
-        if (Str::endsWith($column, '_at') || Str::contains($column, ['datetime', 'captured_at', 'sent_at', 'read_at'])) {
+        $table = (new $this->modelClass)->getTable();
+        $metadata = collect(Schema::getColumns($table))->firstWhere('name', $column);
+        $dbType = is_array($metadata) ? strtolower($metadata['type_name'] ?? $metadata['type'] ?? '') : '';
+
+        if (in_array($dbType, ['datetime', 'timestamp'], true)
+            || Str::endsWith($column, '_at')
+            || Str::contains($column, ['datetime', 'captured_at', 'sent_at', 'read_at'])) {
             return 'datetime';
         }
 
-        if (Str::endsWith($column, '_date') || $column === 'date') {
+        if ($dbType === 'date'
+            || Str::endsWith($column, ['_date', '_until', '_from', '_to'])
+            || $column === 'date') {
             return 'date';
         }
 
-        if (Str::contains($column, ['quantity', 'amount', 'cost', 'price', 'total', 'debit', 'credit', 'balance', 'size'])) {
+        if (in_array($dbType, ['integer', 'bigint', 'smallint', 'numeric', 'decimal', 'real', 'double', 'float'], true)
+            || Str::contains($column, ['quantity', 'amount', 'cost', 'price', 'total', 'debit', 'credit', 'balance', 'size', 'fee', 'rate', 'value', 'discount', 'profit', 'change'])) {
             return 'number';
         }
 

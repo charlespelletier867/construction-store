@@ -15,7 +15,7 @@ class CustomerLedgerEntry extends Model
     protected $casts = [
         'debit' => 'decimal:4',
         'credit' => 'decimal:4',
-        'balance' => 'decimal:4',
+        'balance_after' => 'decimal:4',
         'entry_date' => 'date',
     ];
 

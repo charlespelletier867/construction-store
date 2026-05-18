@@ -19,11 +19,11 @@ class SaleInvoice extends Model
         'discount_amount' => 'decimal:4',
         'tax_amount' => 'decimal:4',
         'transport_fee' => 'decimal:4',
-        'other_fee' => 'decimal:4',
         'grand_total' => 'decimal:4',
         'paid_amount' => 'decimal:4',
         'due_amount' => 'decimal:4',
-        'profit_amount' => 'decimal:4',
+        'received_amount' => 'decimal:4',
+        'change_amount' => 'decimal:4',
         'sale_date' => 'date',
         'due_date' => 'date',
     ];
@@ -58,13 +58,13 @@ class SaleInvoice extends Model
         return $this->hasMany(SalePayment::class, 'sale_invoice_id');
     }
 
-    public function createdBy(): BelongsTo
+    public function cashier(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'cashier_id');
     }
 
-    public function salesperson(): BelongsTo
+    public function approver(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'salesperson_user_id');
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
