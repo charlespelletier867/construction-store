@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -138,6 +139,7 @@ abstract class BaseCrudController extends Controller
     {
         $data = $request->validate($this->validationRules());
         $this->applyDefaults($data);
+        $this->coerceNullToColumnDefaults($data);
         $model = $this->modelClass::create($data);
         $this->afterSave($model, $request);
         flash()->success(__('admin.alert.created'));
@@ -174,6 +176,7 @@ abstract class BaseCrudController extends Controller
     {
         $model = $this->modelClass::findOrFail($id);
         $data = $request->validate($this->validationRules($model));
+        $this->coerceNullToColumnDefaults($data);
         $model->update($data);
         $this->afterSave($model, $request);
         flash()->success(__('admin.alert.updated'));
@@ -193,6 +196,44 @@ abstract class BaseCrudController extends Controller
         $user = request()->user();
         if ($user && $this->modelHasCompanyId() && empty($data['company_id'])) {
             $data['company_id'] = $user->company_id;
+        }
+    }
+
+    /**
+     * For NOT NULL columns that have a non-null default in the schema, replace
+     * incoming null/empty values with the column's default. This prevents
+     * SQLSTATE[23000] NOT NULL constraint violations when a form submits an
+     * empty <input type="number"> for a decimal field declared as
+     * `->default(0)` (no `->nullable()`).
+     */
+    protected function coerceNullToColumnDefaults(array &$data): void
+    {
+        $instance = new ($this->modelClass);
+        $table = $instance->getTable();
+
+        foreach (Schema::getColumns($table) as $col) {
+            $name = $col['name'] ?? null;
+            if (! $name || ! array_key_exists($name, $data)) {
+                continue;
+            }
+            $value = $data[$name];
+            if ($value !== null && $value !== '') {
+                continue;
+            }
+            $nullable = (bool) ($col['nullable'] ?? true);
+            $default = $col['default'] ?? null;
+            if ($nullable || $default === null) {
+                continue;
+            }
+
+            $type = strtolower($col['type_name'] ?? $col['type'] ?? '');
+            if (in_array($type, ['decimal', 'numeric', 'real', 'double', 'float'], true)) {
+                $data[$name] = (float) trim((string) $default, "'\"");
+            } elseif (in_array($type, ['integer', 'bigint', 'smallint', 'tinyint'], true)) {
+                $data[$name] = (int) trim((string) $default, "'\"");
+            } else {
+                $data[$name] = trim((string) $default, "'\"");
+            }
         }
     }
 
