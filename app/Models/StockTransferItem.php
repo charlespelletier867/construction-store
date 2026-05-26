@@ -28,9 +28,4 @@ class StockTransferItem extends Model
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function unit(): BelongsTo
-    {
-        return $this->belongsTo(Unit::class);
-    }
 }

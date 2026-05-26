@@ -28,8 +28,8 @@ class SaleReturnItem extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function unit(): BelongsTo
+    public function saleItem(): BelongsTo
     {
-        return $this->belongsTo(Unit::class);
+        return $this->belongsTo(SaleItem::class);
     }
 }

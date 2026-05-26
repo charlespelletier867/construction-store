@@ -147,6 +147,10 @@ return [
         'created' => 'Record created successfully.',
         'updated' => 'Record updated successfully.',
         'deleted' => 'Record deleted successfully.',
+        'database_error' => 'Could not save: an unexpected database error occurred.',
+        'fk_violation' => 'Could not save: the selected related record does not exist.',
+        'unique_violation' => 'Could not save: a record with these values already exists.',
+        'not_null_violation' => 'Could not save: a required field was left empty.',
     ],
     'pos' => [
         'title' => 'Point of Sale',

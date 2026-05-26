@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -26,9 +27,13 @@ abstract class BaseCrudController extends Controller
 {
     /** @var class-string<Model> */
     protected string $modelClass;
+
     protected string $viewPrefix;
+
     protected string $routePrefix;
+
     protected string $singular;
+
     protected string $pluralLabel;
 
     /** @return array<int, array{data:string,name:string,title:string,render?:string,searchable?:bool,orderable?:bool}> */
@@ -43,6 +48,7 @@ abstract class BaseCrudController extends Controller
         if ($user && $this->modelHasCompanyId() && $user->company_id) {
             $q->where('company_id', $user->company_id);
         }
+
         return $q;
     }
 
@@ -50,6 +56,7 @@ abstract class BaseCrudController extends Controller
     {
         $model = $this->modelClass;
         $instance = new $model;
+
         return $instance->getConnection()->getSchemaBuilder()->hasColumn($instance->getTable(), 'company_id');
     }
 
@@ -65,6 +72,7 @@ abstract class BaseCrudController extends Controller
                 $rules[$field['name']] = $this->defaultValidationRulesFor($field);
             }
         }
+
         return $rules;
     }
 
@@ -91,6 +99,7 @@ abstract class BaseCrudController extends Controller
     {
         if ($request->ajax() || $request->wantsJson()) {
             $query = $this->applyIndexQuery($this->modelClass::query());
+
             return $this->dataTableResponse($query);
         }
 
@@ -127,6 +136,7 @@ abstract class BaseCrudController extends Controller
     public function create(): View
     {
         $instance = new ($this->modelClass);
+
         return view("{$this->viewPrefix}.create", [
             'fields' => $this->formFields(),
             'instance' => $instance,
@@ -140,9 +150,14 @@ abstract class BaseCrudController extends Controller
         $data = $request->validate($this->validationRules());
         $this->applyDefaults($data);
         $this->coerceNullToColumnDefaults($data);
-        $model = $this->modelClass::create($data);
+        try {
+            $model = $this->modelClass::create($data);
+        } catch (QueryException $e) {
+            return $this->redirectBackWithDatabaseError($e, $request);
+        }
         $this->afterSave($model, $request);
         flash()->success(__('admin.alert.created'));
+
         return redirect()->route("{$this->routePrefix}.index");
     }
 
@@ -164,6 +179,7 @@ abstract class BaseCrudController extends Controller
     public function edit(int $id): View
     {
         $instance = $this->modelClass::findOrFail($id);
+
         return view("{$this->viewPrefix}.edit", [
             'fields' => $this->formFields(),
             'instance' => $instance,
@@ -177,18 +193,59 @@ abstract class BaseCrudController extends Controller
         $model = $this->modelClass::findOrFail($id);
         $data = $request->validate($this->validationRules($model));
         $this->coerceNullToColumnDefaults($data);
-        $model->update($data);
+        try {
+            $model->update($data);
+        } catch (QueryException $e) {
+            return $this->redirectBackWithDatabaseError($e, $request);
+        }
         $this->afterSave($model, $request);
         flash()->success(__('admin.alert.updated'));
+
         return redirect()->route("{$this->routePrefix}.index");
     }
 
     public function destroy(int $id): RedirectResponse
     {
         $model = $this->modelClass::findOrFail($id);
-        $model->delete();
+        try {
+            $model->delete();
+        } catch (QueryException $e) {
+            return $this->redirectBackWithDatabaseError($e, request());
+        }
         flash()->success(__('admin.alert.deleted'));
+
         return redirect()->route("{$this->routePrefix}.index");
+    }
+
+    /**
+     * Translate a database constraint violation (FK, UNIQUE, NOT NULL) into a
+     * friendly flash error + redirect back, instead of a raw HTTP 500.
+     * Re-thrown in non-production env so debugging still surfaces the underlying SQL.
+     */
+    protected function redirectBackWithDatabaseError(QueryException $e, Request $request): RedirectResponse
+    {
+        $sqlState = $e->errorInfo[0] ?? null;
+        $driverCode = $e->errorInfo[1] ?? null;
+        $raw = $e->getMessage();
+        $message = match (true) {
+            str_contains($raw, 'FOREIGN KEY constraint') || str_contains($raw, 'foreign key constraint') => __('admin.alert.fk_violation'),
+            str_contains($raw, 'UNIQUE constraint') || str_contains($raw, 'Duplicate entry') => __('admin.alert.unique_violation'),
+            str_contains($raw, 'NOT NULL constraint') || str_contains($raw, 'cannot be null') => __('admin.alert.not_null_violation'),
+            default => __('admin.alert.database_error'),
+        };
+
+        if (function_exists('logger')) {
+            logger()->warning('DB constraint violation handled in CRUD controller', [
+                'controller' => static::class,
+                'sqlstate' => $sqlState,
+                'driver_code' => $driverCode,
+                'message' => $raw,
+            ]);
+        }
+
+        flash()->error($message);
+
+        return back()->withInput($request->except(['_token', '_method', 'password', 'password_confirmation']));
     }
 
     protected function applyDefaults(array &$data): void
