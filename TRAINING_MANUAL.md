@@ -1,52 +1,123 @@
-# មេរៀនប្រើប្រាស់ប្រព័ន្គ — Student Profile Management System
+# មេរៀនប្រើប្រាស់ប្រព័ន្ធ — Construction Store Management System with POS
 # (Training Manual)
 
-> **ជំពូកទី ១ — ទិដ្ឋភាពទូទៅ**
+> **ជំពូកទី ១ — ទិដ្ឋភាពទូទៅ (Overview)**
 
 ---
 
 ## ១.១ អ្វីជា Project នេះ?
 
-**Student Profile Management System** គឺជា Web Application ប្រើប្រាស់ Laravel Framework សម្រាប់គ្រប់គ្រងព័ត៌មានសិស្សពេញលេញ ចាប់ពីការចុះឈ្មោះ (Enrollment) រហូតដល់ការបោះពុម្ពកាត (Student Card) វិញ្ញាបនបត្រ (Certificate) និងសញ្ញាបត្រ (Diploma)។ ប្រព័ន្ធនេះគាំទ្រពហុសាខា (Multi-Branch) និងមានការគ្រប់គ្រសិទ្ធិ (Role-Based Access Control)។
+**Construction Store Management System with POS** គឺជា Web Application សម្រាប់គ្រប់គ្រងហាងលក់សម្ភារសំណង់បែបពហុសាខា (multi-branch construction material store)។ ប្រព័ន្ធនេះរួមមាន៖
+
+- **POS (Point of Sale)** ផ្នែកលក់រហ័សដោយប្រើ Vue 3 — ស្វែងរកផលិតផល បន្ថែមទៅកន្ត្រក ទូទាត់ កាត់ស្តុក និងបោះពុម្ពវិក្កយបត្រ។
+- **Sales / Purchases / Quotations / Returns** — ការគ្រប់គ្រងវិក្កយបត្រលក់-ទិញ ការត្រឡប់ និងតម្លៃផ្ដល់ជូន។
+- **Inventory & Stock** — ស្តុកនៅតាមឃ្លាំង ការផ្ទេរស្តុក ការកែតម្រូវស្តុក ស្តុកខូច និងចលនាស្តុក។
+- **Delivery** — អ្នកបើកបរ យានយន្ត ការដឹកជញ្ជូន និងភស្តុតាងដឹក។
+- **Finance** — ការចំណាយ ប្រភេទចំណាយ និងបញ្ជី (ledger) របស់អតិថិជន/ផ្គត់ផ្គង់។
+- **Reports** — របាយការណ៍លក់ ស្តុក ប្រាក់ចំណេញ ប្រាក់ត្រូវសង/ត្រូវយក និងលទ្ធផលតាមសាខា។
+- **Administration** — ក្រុមហ៊ុន សាខា ឃ្លាំង អ្នកប្រើ តួនាទី សិទ្ធិ ការកំណត់ប្រព័ន្ធ លេខលំដាប់ឯកសារ ពុម្ពឯកសារ និងកំណត់ត្រាសវនកម្ម (audit log)។
+
+ប្រព័ន្ធនេះគាំទ្រការប្ដូរភាសាភ្លាមៗ (**English ↔ ខ្មែរ**) ដោយមិនបាច់ផ្ទុកទំព័រឡើងវិញ និងគាំទ្រ ការប្ដូរសាខា (branch switching) តាម session។
 
 ## ១.២ បច្ចេកវិទ្យាដែលប្រើ (Tech Stack)
 
 | ផ្នែក | បច្ចេកវិទ្យា |
 |---|---|
-| Backend Framework | **Laravel 12** (PHP 8.2+) |
-| Frontend CSS | **TailwindCSS 3** |
-| Frontend JS | **AlpineJS**, **Vue 3** |
-| Build Tool | **Vite** |
-| Database | **SQLite** (default) ឬ **MySQL** |
-| DataTables | **Yajra DataTables** |
-| Notifications | **PHP-Flasher**, **SweetAlert2** |
+| Backend Framework | **Laravel 12** (PHP 8.2+, recommended PHP 8.3) |
+| Auth | **Laravel built-in session auth** (custom `Admin\Auth\LoginController`, no Breeze/Jetstream) |
+| RBAC | តារាង `roles` / `permissions` / `role_permissions` ផ្ទាល់ខ្លួន + `spatie/laravel-permission` ៦.x (installed but optional) |
+| Frontend JS | **Vue 3** + **Inertia.js** + **Ziggy** (routes), **jQuery** for DataTables |
+| Frontend CSS | **Bootstrap 5** (មិនមែន Tailwind) |
+| Build Tool | **Vite 7** + `@vitejs/plugin-vue` + `laravel-vite-plugin` |
+| Database | **SQLite** (default for dev) ឬ **MySQL / PostgreSQL** សម្រាប់ production |
+| DataTables | **Yajra DataTables** (server-side) + `datatables.net-bs5` |
+| Notifications | **PHP-Flasher (SweetAlert)** ខាង server + **SweetAlert2** ខាង client |
 | Date Picker | **Flatpickr** |
 | Select Box | **Tom Select** |
-| Auth | **Laravel Breeze** |
+| i18n | **vue-i18n** + Blade `[data-i18n]` attribute |
+
+> **ចំណាំ**: `composer.json` រួមមាន `spatie/laravel-permission` ៦.x ប៉ុន្តែ project នេះប្រើតារាង `roles`, `permissions`, `role_permissions` ផ្ទាល់ខ្លួន (custom). សិទ្ធិត្រូវបានពិនិត្យតាម method `User::hasPermission($slug)` ដែលអាន `permissions.slug` ឧ. `product.view`, `sale.create`, `report.export` ។ល។
 
 ## ១.៣ រចនាសម្ព័ន្ធ Project (Folder Structure)
 
 ```
-student-profile-management/
+construction-store/
 ├── app/
-│   ├── Helpers/helpers.php          # Helper functions (current_branch_id, slug, etc.)
-│   ├── Http/Controllers/           # 35+ Controllers for all modules
-│   ├── Models/                       # 42 Eloquent Models
-│   ├── Policies/                     # Authorization policies
-│   └── Providers/                    # Service providers
+│   ├── Http/
+│   │   ├── Controllers/
+│   │   │   ├── Admin/                       # 50+ admin controllers
+│   │   │   │   ├── Auth/LoginController.php # ការ login / logout
+│   │   │   │   ├── BaseCrudController.php   # មូលដ្ឋាន CRUD generic
+│   │   │   │   ├── SchemaResourceController.php # CRUD ដែលអានពី schema ដោយស្វ័យប្រវត្តិ
+│   │   │   │   ├── DashboardController.php
+│   │   │   │   ├── POSController.php        # API ឆ្ពោះទៅ POS Vue island
+│   │   │   │   ├── ReportsController.php
+│   │   │   │   ├── BranchSwitchController.php
+│   │   │   │   └── …                          # រាល់ module CRUD
+│   │   │   └── LocaleController.php         # POST /locale/{en|km}
+│   │   └── Middleware/
+│   │       ├── HandleInertiaRequests.php    # Inertia shared props (auth, locale, ziggy, …)
+│   │       ├── SetCurrentBranch.php         # រក្សា current_branch_id ក្នុង session
+│   │       └── SetLocale.php                # តម្រូវភាសាជា en|km
+│   ├── Models/                                # 51 Eloquent Models
+│   ├── Services/
+│   │   ├── NumberSequenceService.php        # បង្កើតលេខឯកសារ (INV-, PAY-, …)
+│   │   └── StockService.php                 # ផ្លាស់ប្ដូរស្តុក + record movement
+│   └── Providers/AppServiceProvider.php
+├── bootstrap/app.php                          # Laravel 12 bootstrapper + middleware
 ├── config/
-│   └── app.php                       # APP_NAME, APP_NAME_KH, APP_NAME_EN
+│   ├── permission.php                         # Spatie config (installed but not actively used)
+│   ├── datatables.php                         # Yajra config
+│   └── …                                       # auth, database, session, mail, …
 ├── database/
 │   ├── migrations/
-│   │   └── 2026_04_29_000000_create_student_profile_system_all_tables.php
-│   └── seeders/                      # 25+ seeders with demo data
+│   │   ├── 0001_01_01_000000_create_users_table.php          # Laravel default (sessions etc.)
+│   │   ├── 0001_01_01_000001_create_cache_table.php
+│   │   ├── 0001_01_01_000002_create_jobs_table.php
+│   │   └── 2026_05_13_000000_create_construction_store_all_in_one_schema.php  # 48+ business tables
+│   ├── factories/UserFactory.php
+│   └── seeders/                                # 21 seeders + DatabaseSeeder
+├── lang/
+│   ├── en/admin.php                            # English UI strings
+│   └── km/admin.php                            # Khmer UI strings
 ├── resources/
-│   └── views/admin/                  # All admin Blade views
-├── public/
-│   └── images/logo.png               # School logo for cards
+│   ├── views/
+│   │   ├── app.blade.php                       # Inertia root (used by Inertia pages)
+│   │   └── admin/
+│   │       ├── auth/login.blade.php
+│   │       ├── dashboard/index.blade.php
+│   │       ├── layouts/
+│   │       │   ├── admin_layout.blade.php      # Master layout
+│   │       │   └── admin_partials/
+│   │       │       ├── head.blade.php
+│   │       │       ├── header.blade.php
+│   │       │       ├── left_sidebar.blade.php
+│   │       │       └── scripts.blade.php
+│   │       ├── _partials/                      # generic_index, generic_form, datatable, actions, …
+│   │       ├── pos/index.blade.php             # ផ្ទុក POSApp Vue island
+│   │       └── <module>/                       # index/create/edit/show blades per module
+│   └── js/
+│       ├── app.js                              # entry; Vite, Inertia, vue-i18n, DataTables, Flatpickr, …
+│       ├── bootstrap.js
+│       └── Pages/POS/POSApp.vue                # Vue 3 POS UI
 ├── routes/
-│   └── web.php                       # All application routes
-└── .env                              # Environment configuration
+│   ├── web.php                                 # public + auth + admin (groups)
+│   └── admin/
+│       ├── master_data.php
+│       ├── transactions.php
+│       ├── inventory.php
+│       ├── delivery.php
+│       ├── finance.php
+│       ├── administration.php
+│       ├── reports.php
+│       └── pos.php
+├── public/                                     # entry / assets
+├── tests/                                      # Feature + Unit (skeleton)
+├── vite.config.js
+├── composer.json
+├── package.json
+├── README.md
+└── TRAINING_MANUAL.md                          # ឯកសារនេះ
 ```
 
 ---
@@ -57,98 +128,79 @@ student-profile-management/
 
 ## ២.១ តម្រូវការប្រព័ន្ធ (System Requirements)
 
-- **PHP**: 8.2 ឬខ្ពស់ជាង
-- **Composer**: ជំនាន់ចុងក្រោយ
-- **Node.js & NPM**: សម្រាប់ compile frontend assets
-- **Database**: SQLite (default) ឬ MySQL 8.0+
+- **PHP** 8.2 ឬខ្ពស់ជាង (recommended **8.3**)
+- **Composer** ជំនាន់ចុងក្រោយ
+- **Node.js** 18+ និង **NPM** (`package.json` ប្រើ Vite 7)
+- **Database** — SQLite (default for dev) ឬ MySQL 8 / PostgreSQL 14+
+- **Web server** — `php artisan serve` (dev) ឬ Nginx / Apache (prod)
 
-## ២.២ ជំហានដំឡើង (Step-by-Step)
+## ២.២ ជំហានដំឡើង (Quick Start)
 
-### ជំហាន ១ — Clone និង Install Dependencies
+ដូចក្នុង [`README.md`](README.md) ផងដែរ៖
 
 ```bash
-# 1. Clone project (ឬ extract zip)
-cd c:\laragon\www\student-profile-management
+# 1) Clone project
+git clone https://github.com/charlespelletier867/construction-store.git
+cd construction-store
 
-# 2. Install PHP dependencies
+# 2) Install PHP dependencies
 composer install
 
-# 3. Install Node dependencies
-npm install
-```
-
-### ជំហាន ២ — កំណត់ Environment
-
-```bash
-# Copy file .env.example ទៅ .env
-copy .env.example .env
-
-# Generate application key
+# 3) កំណត់ environment
+cp .env.example .env
 php artisan key:generate
-```
 
-បើក `.env` ហើយកែតម្រូវ:
-
-```env
-APP_NAME="SITS Information Technology School"
-APP_NAME_KH="សាលាបច្ចេកវិទ្យាព័ត៌មាន អេស អាយ ធី អេស"
-APP_NAME_EN="SITS INFORMATION TECHNOLOGY SCHOOL"
-
-# For SQLite (default)
-DB_CONNECTION=sqlite
-# DB_DATABASE=database/database.sqlite
-
-# For MySQL (optional)
-# DB_CONNECTION=mysql
-# DB_HOST=127.0.0.1
-# DB_PORT=3306
-# DB_DATABASE=student_profile_db
-# DB_USERNAME=root
-# DB_PASSWORD=
-```
-
-### ជំហាន ៣ — បង្កើត Database និង Migrate
-
-```bash
-# Create SQLite file (if using SQLite)
+# 4) បង្កើត database SQLite (សម្រាប់ dev)
 touch database/database.sqlite
 
-# Run all migrations (creates 24 table groups)
-php artisan migrate
+# 5) Run migrations + seed demo data
+php artisan migrate:fresh --seed --force
 
-# Seed demo data (25+ seeders with sample data)
-php artisan db:seed
-```
+# 6) Install JS dependencies + build frontend
+npm install
+npm run build       # ឬ npm run dev សម្រាប់ Vite hot-reload
 
-> **ចំណាំ**: Seeder រួមមានទិន្នន័យគំរូសម្រាប់រាជធានី-ខេត្ត ស្រុក ឃុំ ភូមិ ទាំងអស់នៅកម្ពុជា។
-
-### ជំហាន ៤ — Compile Frontend Assets
-
-```bash
-# Development mode
-npm run dev
-
-# OR Production build
-npm run build
-```
-
-### ជំហាន ៥ — ចាប់ផ្ដើម Server
-
-```bash
+# 7) Start server
 php artisan serve
 ```
 
-បើក Browser ទៅ `http://localhost:8000`
+បើក browser ទៅ <http://127.0.0.1:8000> ។ ប្រព័ន្ធនឹង redirect ទៅ `/login` ដោយស្វ័យប្រវត្តិ។
 
-## ២.៣ គណនី Default (Login Credentials)
+> **ចំណាំ**៖ មាន composer script `composer setup` និង `composer dev` ដែលអាចហៅពាក្យបញ្ជារួមក្នុងជំហានតែមួយ៖
+> - `composer setup` — install + .env + key:generate + migrate + npm install + npm run build
+> - `composer dev` — ដំណើរការ `php artisan serve`, `queue:listen`, `pail` (logs), និង `vite` ដោយប្រើ `concurrently`
 
-បន្ទាប់ពី `php artisan db:seed` គណនី Admin ដំបូងមាន:
+## ២.៣ ការផ្ដាស់ប្ដូរទៅ MySQL (Optional)
 
-| ប្រភេទ | Email | Password |
+កែ `.env` ដូចខាងក្រោម៖
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=construction_store
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+រួចបង្កើត database ឈ្មោះ `construction_store` ហើយ run `php artisan migrate:fresh --seed --force` ម្ដងទៀត។
+
+> **ចំណាំ**៖ migration ដាក់ `Schema::disableForeignKeyConstraints()` ដើម្បីឱ្យដំណើរការបានទាំង SQLite និង MySQL។ Seeder `DatabaseSeeder` ក៏បិទ `FOREIGN_KEY_CHECKS` សម្រាប់ MySQL ដែរ។
+
+## ២.៤ គណនី Default (Login Credentials)
+
+បន្ទាប់ពី `php artisan db:seed` (ឬ `migrate:fresh --seed`) មាន ៦ គណនី demo (សុទ្ធតែលេខសម្ងាត់ = `password`)៖
+
+| Email | Role (slug) | មុខងារ |
 |---|---|---|
-| Admin | `admin@sits.edu.kh` | `password` |
+| `superadmin@demo.local` | `super-admin` | សិទ្ធិទាំងអស់ |
+| `admin@demo.local` | `admin` | គ្រប់គ្រងក្រុមហ៊ុនទាំងមូល |
+| `manager1@demo.local` | `branch-manager` | គ្រប់គ្រងសាខា |
+| `cashier1@demo.local` | `cashier` | លក់ POS តែប៉ុណ្ណោះ |
+| `warehouse1@demo.local` | `warehouse-staff` | គ្រប់គ្រងស្តុក |
+| `accountant1@demo.local` | `accountant` | ហិរញ្ញវត្ថុ និងគណនេយ្យ |
 
-> ប្ដូរពាក្យសម្ងាត់ភ្លាមបន្ទាប់ពី Login លើកដំបូង!
+> **សុវត្ថិភាព**: ប្ដូរលេខសម្ងាត់ភ្លាមនៅពេលដំឡើងលើ production។
 
 ---
 
@@ -156,541 +208,543 @@ php artisan serve
 
 ---
 
-## ៣.១ តារាងទាំងអស់ (All 24 Table Groups)
+## ៣.១ All-in-one Migration
 
-តារាងត្រូវបានបង្កើតក្នុង file `database/migrations/2026_04_29_000000_create_student_profile_system_all_tables.php`:
+តារាងពាណិជ្ជកម្មទាំងអស់ត្រូវបានបង្កើតក្នុង file តែមួយ៖
+
+```
+database/migrations/2026_05_13_000000_create_construction_store_all_in_one_schema.php
+```
+
+រួមមាន **៤៨ តារាងពាណិជ្ជកម្ម (business tables)** + **៣ តារាងស្តង់ដារ Laravel** (`users` redefined, `password_reset_tokens`, `sessions`) = **៥១ tables**។ បន្ថែម migration ស្តង់ដារសម្រាប់ `cache`, `cache_locks`, `jobs`, `job_batches`, `failed_jobs` ។
+
+## ៣.២ ក្រុមតារាងសំខាន់ (Table Groups)
 
 | # | Group | Tables | គោលបំណង |
 |---|---|---|---|
-| 0 | **Branches** | `branches` | សាខាសាលា (multi-campus) |
-| 1 | **Auth** | `roles`, `users`, `permissions`, `role_user`, `permission_role`, `permission_user`, `branch_user` | ប្រព័ន្ធសិទ្ធិ និងអ្នកប្រើ |
-| 2 | **Locations** | `provinces`, `districts`, `communes`, `villages`, `addresses` | ទីតាំងភូមិសាស្ត្រកម្ពុជា |
-| 3 | **Basic Data** | `genders` | ភេទ |
-| 4 | **Staff** | `staff` | បុគ្គលិក និងគ្រូបង្រៀន |
-| 5 | **Students** | `students` | ព័ត៌មានសិស្ស |
-| 6 | **Guardians** | `guardians`, `student_guardians` | ព័ត៌មានឪពុកម្ដាយ/អាណាព្យាបាល |
-| 7 | **Academic** | `courses`, `levels`, `academic_years`, `shifts` | វគ្គសិក្សា ថ្នាក់ ឆ្នាំសិក្សា វេន |
-| 8 | **Buildings** | `buildings`, `rooms` | អគារ និងបន្ទប់ (រួមទាំង dormitory) |
-| 9 | **Classes** | `classes`, `class_schedules`, `enrollments` | ថ្នាក់រៀន កាលវិភាគ ការចុះឈ្មោះ |
-| 10 | **Room Assignments** | `student_room_assignments` | ការចាត់បន្ទប់ស្នាក់នៅ |
-| 11 | **Files** | `student_files` | ឯកសារ និងរូបភាពសិស្ស |
-| 12 | **Print Templates** | `print_templates` | ពុម្ពកាត វិញ្ញាបនបត្រ សញ្ញាបត្រ |
-| 13 | **Student Cards** | `student_cards` | កាតសិស្ស |
-| 14 | **Certificates** | `student_certificates` | វិញ្ញាបនបត្រ |
-| 15 | **Diplomas** | `student_diplomas` | សញ្ញាបត្រ |
-| 16 | **Fees** | `fee_types`, `student_invoices`, `student_invoice_items`, `payments` | ប្រភេទថ្លៃ វិក្កយបត្រ ការទូទាត់ |
-| 17 | **Update Requests** | `student_update_requests` | សំណើកែប្រែព័ត៌មានសិស្ស |
-| 18 | **Print Logs** | `print_logs` | កំណត់ត្រាការបោះពុម្ព |
-| 19 | **Report Logs** | `report_logs` | កំណត់ត្រារបាយការណ៍ |
-| 20 | **Export Logs** | `export_logs` | កំណត់ត្រានាំចេញទិន្នន័យ |
-| 21 | **Audit Logs** | `audit_logs` | កំណត់ត្រាសកម្មភាពអ្នកប្រើ |
-| 22 | **File Protection** | `file_protection_rules`, `file_access_logs` | ការការពារឯកសារ |
-| 23 | **Branch Settings** | `branch_settings` | ការកំណត់សាខា (ឈ្មោះសាលា ឡូហ្គូ ហត្ថលេខា) |
-| 24 | **Attendances** | `attendances` | វត្តមានសិស្ស និងបុគ្គលិក |
+| 1 | **Foundation** | `companies` | ក្រុមហ៊ុនជាស្នូល (multi-tenant friendly) |
+| 2 | **Roles & Permissions** | `roles`, `permissions`, `role_permissions` | RBAC ផ្ទាល់ខ្លួន |
+| 3 | **Users** | `users` (re-defined), `user_branch_roles` | អ្នកប្រើ និងតួនាទីពហុសាខា |
+| 4 | **Branches & Warehouses** | `branches`, `warehouses` | សាខា និងឃ្លាំងស្តុក |
+| 5 | **Product Master Data** | `categories` (self-referencing), `units`, `brands`, `products` | ប្រភេទ ឯកតា ម៉ាក និងផលិតផល |
+| 6 | **Contacts** | `suppliers`, `customers` | អ្នកផ្គត់ផ្គង់ និងអតិថិជន |
+| 7 | **Stock Core** | `stock_balances`, `stock_movements`, `stock_adjustments`, `stock_adjustment_items`, `damaged_stocks` | ស្តុកបច្ចុប្បន្ន ចលនាស្តុក និងការកែតម្រូវ |
+| 8 | **Purchases** | `purchase_invoices`, `purchase_items`, `purchase_payments`, `purchase_returns`, `purchase_return_items` | ការទិញ ការទូទាត់ និងការត្រឡប់ |
+| 9 | **Sales** | `sale_invoices`, `sale_items`, `sale_payments`, `sale_returns`, `sale_return_items` | ការលក់ ការទូទាត់ និងការត្រឡប់ |
+| 10 | **Quotations** | `quotations`, `quotation_items` | តម្លៃផ្ដល់ជូន (អាច convert ទៅ sale) |
+| 11 | **Delivery** | `drivers`, `vehicles`, `vehicle_expenses`, `deliveries`, `delivery_proofs` | ការដឹកជញ្ជូន |
+| 12 | **Stock Transfer** | `stock_transfers`, `stock_transfer_items` | ការផ្ទេរសម្ភារពីឃ្លាំងមួយទៅឃ្លាំងមួយ |
+| 13 | **Finance** | `expense_categories`, `expenses`, `customer_ledger_entries`, `supplier_ledger_entries` | ការចំណាយ និងបញ្ជី (ledger) |
+| 14 | **System** | `notifications`, `audit_logs`, `login_histories`, `system_settings`, `number_sequences`, `document_templates`, `attachments` | ការកំណត់ប្រព័ន្ធ និងសវនកម្ម |
 
-## ៣.២ Relationship Diagram (រូបភាពទំនាក់ទំនង)
+## ៣.៣ Relationships សំខាន់ៗ
 
 ```
-Branch (1)
-├── Users (N)
-├── Staff (N)
-├── Students (N)
-│   ├── Guardians (M via student_guardians)
-│   ├── Enrollments (N)
-│   │   └── Classes (N)
-│   ├── StudentCards (N)
-│   ├── StudentCertificates (N)
-│   ├── StudentDiplomas (N)
-│   ├── StudentFiles (N)
-│   ├── StudentInvoices (N)
-│   │   ├── StudentInvoiceItems (N)
-│   │   └── Payments (N)
-│   └── StudentRoomAssignments (N)
-│       └── Rooms (N)
-│           └── Buildings (N)
-├── AcademicYears (N)
-├── Classes (N)
-│   ├── Courses (N)
-│   │   └── Levels (N)
-│   ├── Shifts (N)
-│   └── ClassSchedules (N)
-└── BranchSettings (1)
+Company (1)
+├── Branches (N)
+│   ├── Warehouses (N)
+│   ├── StockBalances (N)            ── Product (N)
+│   ├── StockMovements (N)           ── Product, Warehouse, references SaleInvoice / PurchaseInvoice / …
+│   ├── SaleInvoices (N)             ── Customer, Cashier(User), Warehouse
+│   │   ├── SaleItems (N)            ── Product, Unit
+│   │   ├── SalePayments (N)
+│   │   └── SaleReturns (N)
+│   │       └── SaleReturnItems (N)
+│   ├── PurchaseInvoices (N)         ── Supplier, Warehouse
+│   │   ├── PurchaseItems (N)        ── Product, Unit
+│   │   ├── PurchasePayments (N)
+│   │   └── PurchaseReturns (N)
+│   │       └── PurchaseReturnItems (N)
+│   ├── Quotations (N)               ── Customer (optional convert to SaleInvoice)
+│   │   └── QuotationItems (N)
+│   ├── StockTransfers (N)           ── from_warehouse, to_warehouse
+│   │   └── StockTransferItems (N)
+│   ├── StockAdjustments (N)
+│   │   └── StockAdjustmentItems (N) ── Product
+│   ├── DamagedStocks (N)            ── Product
+│   ├── Expenses (N)                 ── ExpenseCategory
+│   ├── Deliveries (N)               ── Driver, Vehicle, SaleInvoice (optional)
+│   │   └── DeliveryProofs (N)
+│   └── VehicleExpenses (N)          ── Vehicle, Driver
+├── Users (N)                         ── Role (default), UserBranchRoles (M)
+├── Roles (N) ── Permissions (M via role_permissions)
+├── Categories (self-referencing parent_id)
+├── Units / Brands / Products
+├── Suppliers (with current_balance)
+├── Customers (with current_balance, credit_limit)
+├── Drivers / Vehicles
+├── ExpenseCategories
+├── SystemSettings (key/value, public/private)
+├── NumberSequences (per company + branch + document_type)
+├── DocumentTemplates (invoice/receipt/quotation/delivery template HTML)
+└── Attachments (polymorphic: attachable_type + attachable_id)
 ```
+
+## ៣.៤ Naming conventions
+
+- **Primary keys**: `id` (bigint)
+- **Foreign keys**: `<table_singular>_id` (ឧ. `branch_id`, `product_id`)
+- **Money columns**: ប្រើ `decimal(18,2)` ឬ `decimal(18,4)` និងផ្ទុក KHR ឬ USD ដោយ `currency` column នៅលើ `companies`
+- **Status / type columns**: ប្រើ `string` ជាជាង database enum ដើម្បីបត់បែន
+- **Soft deletes**: តារាងគ្រឹះភាគច្រើនមាន `softDeletes()` (companies, users, branches, warehouses, products, customers, suppliers, sale_invoices, purchase_invoices, …)
+- **Unique constraints**: ភាគច្រើនជា composite ឧ. `(company_id, product_code)`, `(company_id, sale_no)`, `(company_id, supplier_code)`
 
 ---
 
-> **ជំពូកទី ៤ — ម៉ូឌុល និងមុខងារទាំងអស់**
+> **ជំពូកទី ៤ — រចនាសម្ព័ន្ធកម្មវិធី (Application Architecture)**
 
 ---
 
-## ៤.១ Dashboard (ផ្ទាំងគ្រប់គ្រង)
+## ៤.១ Routing
 
-**URL**: `/dashboard`
+`routes/web.php` កំណត់៖
 
-បង្ហាញស្ថិតិសង្ខេប:
-- ចំនួនសិស្សសរុប / សិស្សសកម្ម
-- ការចុះឈ្មោះដែលកំពុងសិក្សា
-- វគ្គសិក្សា និងថ្នាក់សកម្ម
-- វិក្កយបត្រដែលមិនទាន់បង់
-- ការទូទាត់សរុប
+1. **Public** — `/` redirect ទៅ login ឬ dashboard, និង `POST /locale/{en|km}` សម្រាប់ប្ដូរភាសា។
+2. **Guest** — `GET /login`, `POST /login`
+3. **Authenticated admin** (`/admin/...`) — `dashboard`, `branch.switch`, និងរួមបញ្ចូល route files មកពី `routes/admin/`:
+   - `master_data.php` — products, categories, brands, units, customers, suppliers
+   - `transactions.php` — sale_invoices/items/payments/returns, quotations
+   - `inventory.php` — stock_balances/movements/transfers/adjustments/damaged_stocks
+   - `delivery.php` — deliveries, delivery_proofs, drivers, vehicles, vehicle_expenses
+   - `finance.php` — expenses, expense_categories, customer_ledger, supplier_ledger
+   - `administration.php` — companies, branches, warehouses, users, roles, permissions, role_permissions, user_branch_roles, system_settings, number_sequences, document_templates, notifications, attachments, audit_logs, login_histories
+   - `reports.php` — sales, stock, profit, payable, receivable, branch-performance
+   - `pos.php` — pos.index, pos.search_products, pos.checkout
 
-> **ចំណាំ**: Dashboard បង្ហាញតែទិន្នន័យសាខាដែលបានជ្រើសរើស (branch-scoped)។
+Route names ត្រូវបាន prefix ដោយ `admin.` ឧ. `admin.products.index`, `admin.pos.checkout` ។ Ziggy export route names ទៅ JavaScript សម្រាប់ Inertia/Vue ប្រើតាមរយៈ `route('admin.products.index')`.
 
-## ៤.២ Branch Management (គ្រប់គ្រងសាខា)
+## ៤.២ Middleware
 
-**URL**: `/admin/branches`
+នៅក្នុង `bootstrap/app.php` Middleware ខាងក្រោមត្រូវបាន append ទៅ `web` group ដោយស្វ័យប្រវត្តិ៖
 
-- **Create**: បន្ថែមសាខាថ្មី (កូដ ឈ្មោះខ្មែរ/អង់គ្លេស អាសយដ្ឋាន ទូរសព្ទ ឡូហ្គូ)
-- **Switch**: ផ្លាស់ប្ដូរសាខាកំពុងប្រើ (session-based)
-- **Settings**: កំណត់ឈ្មោះសាលា ឡូហ្គូ ហត្ថលេខា ស្តាប់សាលា លេខទូរសព្ទ អ៊ីមែល
+| Middleware | មុខងារ |
+|---|---|
+| `SetLocale` | អានភាសាពី session, header `X-Locale`, ឬ config; បើ valid នោះ `App::setLocale()` |
+| `SetCurrentBranch` | ប្រសិនបើ user login ហើយមិនទាន់មាន `current_branch_id` ក្នុង session នោះ default ទៅ `user.default_branch_id` ឬ branch ដំបូងរបស់ក្រុមហ៊ុន |
+| `HandleInertiaRequests` | Share `auth`, `locale`, `translations[en|km]`, `flash`, `ziggy`, `current_branch` ទៅ Inertia |
 
-## ៤.៣ User Management (គ្រប់គ្រងអ្នកប្រើ)
+Guest redirects: `redirectGuestsTo(fn () => route('admin.login'))`.
 
-**URL**: `/admin/users`
+## ៤.៣ Controllers — BaseCrudController & SchemaResourceController
 
-- បង្កើត / កែ / លុបអ្នកប្រើ
-- កំណត់ Role និង Permission
-- កំណត់សាខា (branch assignment)
+ដើម្បីកាត់បន្ថយ boilerplate, project នេះមាន base controllers ពីរ៖
 
-## ៤.៤ Roles & Permissions (សិទ្ធិ)
+### `BaseCrudController` (abstract)
+- កំណត់ flow ស្តង់ដារ៖ `index` (DataTables JSON ឬ Blade view) → `create` → `store` → `show` → `edit` → `update` → `destroy`
+- Subclass override:
+  - `$modelClass`, `$viewPrefix`, `$routePrefix`, `$singular`, `$pluralLabel`
+  - `tableColumns()` — DataTables columns
+  - `formFields()` — form field definitions (name, type, label, options, rules, required, col, default, help)
+  - `validationRules()` (optional)
+  - `applyIndexQuery(Builder $q)` — បន្ថែម scope (company/branch)
+  - `beforeStore/Update`, `afterSave` hooks
+- Auto-scope ដោយ `company_id` ប្រសិន model មាន column នោះ
+- បង្ហាញ notifications ដោយ `flash()->success(__('admin.alert.created|updated|deleted'))`
 
-**URLs**: `/admin/roles`, `/admin/permissions`
+### `SchemaResourceController` (extends BaseCrudController)
+- **អានគ្រោងពី database schema ដោយស្វ័យប្រវត្តិ** ដើម្បីបង្កើត form fields និង DataTables columns
+- មាន `selectSources` map (`branch_id` → `Branch::class`, name; `product_id` → `Product::class`, name; ល។ល។)
+- Subclass គ្រាន់តែប្រកាស `$modelClass` + `$viewPrefix` + `$routePrefix` ហើយ override `$indexColumns` ឬ `$fieldOverrides` តាមតម្រូវការ
+- ត្រូវបានប្រើដោយ ~28 controllers (purchase_invoices, sale_invoices, stock_*, deliveries, ល។ល។)
 
-ប្រព័ន្ធសិទ្ធិមាន ៣ កម្រិត:
-1. **Role** (ឧ. Admin, Manager, Receptionist, Teacher, Accountant)
-2. **Permission** (ឧ. `students.view`, `students.create`, `students.edit`, `students.delete`)
-3. **Permission per User** (override ជារបស់គណនី)
+> ProductsController, BranchesController, CategoriesController, និងផ្សេងទៀតប្រើ `BaseCrudController` ដោយផ្ទាល់សម្រាប់ការគ្រប់គ្រងលម្អិតបន្ថែម។
 
-## ៤.៥ Student Management (គ្រប់គ្រងសិស្ស)
+## ៤.៤ POS (Point of Sale) Module
 
-**URL**: `/admin/students`
+POS គឺជា **Vue 3 island** ដែលត្រូវ mount ចូលក្នុង Blade page (មិនមែន full Inertia page)៖
 
-ព័ត៌មានសិស្សរួមមាន:
-- **បញ្ជីសិស្ស**: DataTable មាន Search, Filter, Export
-- **បង្កើតសិស្ស**: បំពេញកូដសិស្ស ឈ្មោះខ្មែរ/ឡាតាំង ភេទ ថ្ងៃកំណើត ទីកន្លែងកំណើត អាសយដ្ឋានបច្ចុប្បន្ន ទូរសព្ទ អ៊ីមែល រូបថត
-- **មើលលំអិត**: Profile សិស្សពេញលេញ
-- **កែសម្រួល**: Update ព័ត៌មានណាមួយ
-- **Soft Delete**: លុបបណ្ដោះអាសន្ន (recoverable)
+1. Blade view `resources/views/admin/pos/index.blade.php` ផ្ដល់ `<div data-vue-island="POSApp" data-props='@json([...])'></div>`.
+2. `resources/js/app.js` ស្គាល់ island name `POSApp` ហើយ mount Vue component `Pages/POS/POSApp.vue`.
+3. Component ប្រើ `vue-i18n` សម្រាប់ UI strings (`t('pos.cart')`, `t('pos.grand_total')`, …)។
 
-### Sub-features per Student:
+### Flow ខាងក្នុង
 
-| Feature | URL Pattern | គោលបំណង |
+| ជំហាន | Endpoint | មុខងារ |
 |---|---|---|
-| Files | `/admin/students/{id}/files` | Upload រូបភាព ឯកសារ (ប្រភេទ: photo, birth_certificate, id_card, certificate, diploma, document) |
-| Room Assignments | `/admin/students/{id}/room-assignments` | ចាត់បន្ទប់ស្នាក់នៅ និង Check-in/Check-out |
-| Cards | `/admin/students/{id}/cards` | បង្កើត/កែ/បោះពុម្ពកាតសិស្ស |
-| Certificates | `/admin/students/{id}/certificates` | បង្កើត/កែ/បោះពុម្ពវិញ្ញាបនបត្រ |
-| Diplomas | `/admin/students/{id}/diplomas` | បង្កើត/កែ/បោះពុម្ពសញ្ញាបត្រ |
-| Update Requests | `/admin/students/{id}/update-requests` | សំណើកែប្រែព័ត៌មាន |
+| 1. Open POS | `GET /admin/pos` | រាយ customers (active), warehouses របស់ branch |
+| 2. Search product | `GET /admin/pos/search-products?q=...&warehouse_id=...` | ស្វែងរកតាម name/code/sku/barcode + return `quantity_on_hand` តាម `StockService::quantityOnHand()` |
+| 3. Checkout | `POST /admin/pos/checkout` | Validate → `DB::transaction` → បង្កើត `sale_invoices` + `sale_items` + (បើ paid > 0) `sale_payments` → call `StockService::move()` ប្រសិន `product.track_stock` |
 
-## ៤.៦ Guardian Management (គ្រប់គ្រងឪពុកម្ដាយ)
+### លេខវិក្កយបត្រ (Document numbering)
+- `NumberSequenceService::next('sale_invoice', $companyId, $branchId, 'INV-', 5)` ផ្ដល់លេខបន្ទាប់ ឧ. `INV-00001`.
+- ឧបករណ៍នេះក៏ប្រើដោយ `sale_payment` (`PAY-`), `purchase_invoice`, ល។ល។ – Type ត្រូវ map ទៅ row ក្នុង `number_sequences` (company + branch + document_type unique)។
 
-**URL**: `/admin/guardians`
+### ការទូទាត់ និងការគណនា
+- `subtotal = Σ (quantity × unit_price − line_discount)`
+- `grand_total = max(0, subtotal − discount_amount + tax_amount)`
+- `change_amount = max(0, paid − grand_total)`
+- `payment_status`: `paid` (paid ≥ grand_total) / `partial_paid` / `unpaid`
 
-- បង្កើតអាណាព្យាបាលថ្មី
-- ភ្ជាប់ទៅនឹងសិស្ស (relationship: father, mother, guardian, etc.)
-- កំណត់ **Primary Guardian** (is_primary = true) — នឹងបង្ហាញលើកាតសិស្ស
+## ៤.៥ StockService
 
-## ៤.៧ Academic Setup (ការកំណត់វិទ្យាស្ថាន)
+ស្តុកត្រូវរក្សាទុកទាំងជា **balance** (តារាង `stock_balances` per company/branch/warehouse/product) និងជា **movement** (តារាង `stock_movements` ដែលរក្សា audit trail)។
 
-### Courses (វគ្គសិក្សា)
-**URL**: `/admin/courses`
-- ឈ្មោះវគ្គ ការពិពណ៌នា ស្ថានភាព
-- **Levels** (ថ្នាក់): ភ្ជាប់ទៅ Course (ឧ. វគ្គ IT → Level 1, Level 2, Level 3)
+API សំខាន់៖
 
-### Academic Years (ឆ្នាំសិក្សា)
-**URL**: `/admin/academic-years`
-- ឈ្មោះឆ្នាំ ថ្ងៃចាប់ផ្ដើម ថ្ងៃបញ្ចប់
-- កំណត់ **Current Year** (is_current = true)
+```php
+$this->stock->move([
+    'company_id'    => $companyId,
+    'branch_id'     => $branchId,
+    'warehouse_id'  => $warehouseId,
+    'product_id'    => $productId,
+    'movement_type' => 'sale' | 'purchase' | 'transfer_in' | 'transfer_out' | 'adjustment' | 'damage' | 'return_in' | 'return_out',
+    'quantity'      => $signedQuantity,   // ឡើង + ចុះ −
+    'unit_cost'     => $unitCost,
+    'reference_type'=> SaleInvoice::class, // optional polymorphic ref
+    'reference_id'  => $invoiceId,
+    'created_by'    => $userId,
+]);
+```
 
-### Shifts (វេន)
-**URL**: `/admin/shifts`
-- ឈ្មោះវេន ម៉ោងចាប់ផ្ដើម ម៉ោងបញ្ចប់ (ឧ. Morning 8:00-11:00, Afternoon 13:00-16:00)
+- ប្រើ `lockForUpdate()` ដើម្បីការពារ race condition
+- ធ្វើបច្ចុប្បន្នភាព `average_cost` តាមមធ្យមភាគថ្លៃរំកិលនៅពេលស្តុកចូល
+- Recompute `available_quantity = quantity − reserved_quantity`
 
-## ៤.៨ Class Management (គ្រប់គ្រងថ្នាក់)
+`quantityOnHand($productId, $branchId, $warehouseId = null)` ផ្ដល់ស្តុកសរុបបច្ចុប្បន្ន។
 
-**URL**: `/admin/classes`
+## ៤.៦ Layout & Frontend assets
 
-- **Class Code**: កូដថ្នាក់ (ឧ. IT-L1-MOR-2026)
-- **Course & Level**: ភ្ជាប់ទៅវគ្គ និងថ្នាក់
-- **Academic Year & Shift**: ភ្ជាប់ឆ្នាំសិក្សា និងវេន
-- **Teacher**: ជ្រើសរើសពី Staff
-- **Room**: បន្ទប់រៀន
-- **Schedules**: កាលវិភាគប្រចាំសប្ដាហ៍ (ថ្ងៃ ម៉ោងចាប់ផ្ដើម-បញ្ចប់)
+Layout `resources/views/admin/layouts/admin_layout.blade.php` រួមមាន partials៖
 
-## ៤.៩ Enrollment (ការចុះឈ្មោះ)
+```
+admin_layout.blade.php
+└── admin_partials/
+    ├── head.blade.php      # meta, Vite @vite(['resources/css/app.css','resources/js/app.js']), CSRF
+    ├── header.blade.php    # top bar, branch switcher, language switcher, user dropdown
+    ├── left_sidebar.blade.php  # metismenu — Dashboard, POS, Products, Contacts, Sales, Purchases, Inventory, Delivery, Finance, Reports, Administration
+    └── scripts.blade.php   # window.__APP_LOCALE__, window.__APP_TRANSLATIONS__
+```
 
-**URL**: `/admin/enrollments`
+`resources/js/app.js` ៖
 
-- ចុះឈ្មោះសិស្សចូលថ្នាក់
-- **Status**: studying, completed, dropped, transferred
-- **Study Time Label**: សម្គាល់ពេលវេលាសិក្សា
-- បង្ហាញប្រវត្តិចុះឈ្មោះទាំងអស់របស់សិស្ស
+- Initialize **vue-i18n** ដោយយក translations ពី `window.__APP_TRANSLATIONS__` (ផ្ដល់ដោយ HandleInertiaRequests + scripts.blade)
+- `applyDomTranslations(locale)` — re-translate `[data-i18n]` និង `[data-i18n-placeholder]` ភ្លាមៗ
+- `switchLocale(locale)` — Update i18n + DOM + `POST /locale/{locale}` + reload DataTables AJAX
+- Init Flatpickr & Tom Select on `.flatpickr` / `.tom-select`
+- SweetAlert2 confirm-delete delegation សម្រាប់ `form.confirm-delete`
+- Inertia setup (បើ `#app[data-page]` មាន) — auto-discover Pages ពី `resources/js/Pages/**/*.vue`
+- Vue **island registry** — សម្រាប់ផ្ទុក component ដូច `POSApp` ចូលក្នុង Blade page
 
-## ៤.១០ Attendance (វត្តមាន)
+## ៤.៧ ការប្ដូរភាសា (No-refresh i18n)
 
-**URL**: `/admin/attendances`
+មាន ៣ កម្រិត៖
 
-- បំពេញវត្តមានប្រចាំថ្ងៃ (បុគ្គលិក ឬសិស្ស)
-- **Status**: present, absent, late, excused
-- **Check-in / Check-out time**
-- Bulk Entry: បំពេញវត្តមានច្រើននាក់ក្នុងថ្នាក់តែម្ដង
+| កម្រិត | របៀប |
+|---|---|
+| Server | `POST /locale/{en\|km}` → ដាក់ក្នុង session → `SetLocale` middleware ហៅ `App::setLocale()` |
+| Blade | រាល់ element ដែលត្រូវប្ដូរ មាន `data-i18n="key"` ឧ. `<span data-i18n="menu.dashboard">{{ __('admin.menu.dashboard') }}</span>` |
+| Vue / SPA | `vue-i18n` យកពី `window.__APP_TRANSLATIONS__` ដែលផ្ទុក `en` និង `km` ទាំងពីរ |
 
-## ៤.១១ Fee Management (គ្រប់គ្រងថ្លៃ)
+Keys ដាក់ក្នុង `lang/en/admin.php` និង `lang/km/admin.php` ដោយប្រើ dot-notation (`menu.dashboard`, `pos.grand_total`, `auth.login_title`, `alert.created`, ល។ល។)។
 
-### Fee Types (ប្រភេទថ្លៃ)
-**URL**: `/admin/fees/types`
-- ឈ្មោះប្រភេទថ្លៃ (ឧ. ថ្លៃសិក្សា, ថ្លៃសៀវភៅ, ថ្លៃប្រឡង) និងចំនួនទឹកប្រាក់
+---
 
-### Invoices (វិក្កយបត្រ)
-**URL**: `/admin/fees/invoices`
-- បង្កើតវិក្កយបត្រសម្រាប់សិស្ស
-- បន្ថែមធាតុ (items) ពី Fee Types
-- **Status**: unpaid, partial, paid, cancelled
-- គណនាតុល្យភាព (Balance) ដោយស្វ័យប្រវត្តិ
+> **ជំពូកទី ៥ — សិទ្ធិ និងតួនាទី (Roles & Permissions)**
 
-### Payments (ការទូទាត់)
-**URL**: `/admin/fees/payments`
-- ទទួលការទូទាត់ពីសិស្ស
-- **Method**: cash, bank, ABA, Wing, other
-- ភ្ជាប់ទៅ Invoice (optional)
-- គណនាតុល្យភាពវិក្កយបត្រដោយស្វ័យប្រវត្តិ
+---
 
-## ៤.១២ Room & Building (អគារ និងបន្ទប់)
+## ៥.១ Roles (តួនាទីមាន seed ស្រាប់)
 
-**URL**: `/admin/rooms`
-
-- **Buildings**: អគារថ្មី (ឈ្មោះ អាសយដ្ឋាន)
-- **Rooms**: បន្ទប់ (លេខ ប្រភេទ: single/double/shared/classroom, ចំណុះ, តម្លៃប្រចាំខែ)
-- **Status**: available, full, maintenance, inactive
-
-## ៤.១៣ Print System (ប្រព័ន្ធបោះពុម្ព)
-
-### Print Templates (ពុម្ពបោះពុម្ព)
-**URL**: `/admin/print-templates`
-
-ប្រព័ន្ធពុម្ពអាចកែប្រែបានទាំងស្រុង:
-- **Template Types**: student_card, certificate, diploma
-- **HTML Template**: កែ HTML structure
-- **CSS Template**: កែ styling
-- **Settings**: JSON config បន្ថែម
-- **Default Template**: កំណត់ពុម្ពដើម្បីប្រើដោយស្វ័យប្រវត្តិ
-
-### Student Cards (កាតសិស្ស)
-**URL**: `/admin/student-cards`
-
-- បង្ហាញកាតទាំងអស់ក្នុងប្រព័ន្ធ
-- **Bulk Print**: ជ្រើសរើសច្រើនកាត → Print ព្រមគ្នា (4 កាត/ទំព័រ A4)
-- **Single Print**: Print កាតតែមួយ (ទំហំពេញ A4 landscape)
-- **Card Layout** (បច្ចុប្បន្ន): Header ពណ៌ខៀវ `#0000ff` + ឈ្មោះសាលា រាងកោងក្រហមតាមរយៈ SVG រូបថត និងព័ត៌មានសិស្ស
-
-### Certificates & Diplomas
-**URL**: `/admin/student-certificates`, `/admin/student-diplomas`
-
-- **Workflow**: Draft → Approved → Printed → Cancelled
-- **Approval**: អ្នកមានសិទ្ធិ approve ទើបបោះពុម្ពបាន
-- **Print Log**: កត់ត្រាចំនួនការបោះពុម្ព
-
-## ៤.១៤ Reports (របាយការណ៍)
-
-**URL**: `/admin/reports`
-
-របាយការណ៍ដែលមាន:
-1. **Student Report** — បញ្ជីសិស្សតាមលក្ខខណ្ឌ
-2. **New Admissions** — សិស្សចុះឈ្មោះថ្មី
-3. **Class Roster** — បញ្ជីសិស្សតាមថ្នាក់
-4. **Monthly Attendance** — វត្តមានប្រចាំខែ
-5. **Daily Cash Receipts** — ទទួលលុយប្រចាំថ្ងៃ
-6. **AR Aging** — វិក្កយបត្រដែលនៅជំពាក់
-7. **Revenue Report** — ចំណូលសរុប
-8. **Fee Statement** — របាយការណ៍ថ្លៃសិក្សា
-
-**Export Formats**: PDF, Excel, CSV, Print, View
-
-## ៤.១៥ Logs & Auditing (កំណត់ត្រា)
-
-| Log Type | URL | គោលបំណង |
+| Slug | Name | សិទ្ធិសំខាន់ |
 |---|---|---|
-| Audit Logs | `/admin/audit-logs` | កត់ត្រាសកម្មភាពទាំងអស់ (create, update, delete) |
-| Report Logs | `/admin/report-logs` | កត់ត្រាការបង្កើតរបាយការណ៍ |
-| Export Logs | `/admin/export-logs` | កត់ត្រាការនាំចេញទិន្នន័យ |
-| Print Logs | `/admin/print-logs` | កត់ត្រាការបោះពុម្ព |
-| File Access Logs | `/admin/file-access-logs` | កត់ត្រាការចូលមើលឯកសារ |
+| `super-admin` | Super Admin | គ្រប់សិទ្ធិទាំងអស់ (ឆ្លងក្រុមហ៊ុន) |
+| `admin` | Admin | គ្រប់គ្រងក្រុមហ៊ុនមួយ |
+| `branch-manager` | Branch Manager | គ្រប់គ្រងសាខា |
+| `cashier` | Cashier | លក់ POS ប៉ុណ្ណោះ |
+| `warehouse-staff` | Warehouse Staff | ស្តុក និងការផ្ទេរ |
+| `accountant` | Accountant | ហិរញ្ញវត្ថុ + របាយការណ៍ |
 
-## ៤.១៦ File Protection (ការពារឯកសារ)
+## ៥.២ Permissions
 
-**URL**: `/admin/file-protection-rules`
+Permissions ត្រូវបាន seed ដោយ `PermissionsTableSeeder.php` តាមរបៀប `<module>.<action>`. មាន module ខាងក្រោម (សរុបជាង ១៣០ permission)៖
 
-កំណត់តាម Role:
-- Allow Download? (បើក/បិទ)
-- Allow Print? (បើក/បិទ)
-- Allow Export? (បើក/បិទ)
-- Watermark? (បើក/បិទ)
+```
+company  branch  warehouse  user  role  permission
+category unit  brand  product  supplier  customer
+stock_balance  stock_movement  stock_adjustment  damaged_stock  stock_transfer
+purchase  purchase_payment  purchase_return
+sale  sale_payment  sale_return  quotation
+driver  vehicle  vehicle_expense  delivery
+expense_category  expense
+report  system_setting
+```
+
+Actions ស្តង់ដារ៖ `view`, `create`, `edit`, `delete`, និងបន្ថែម `approve`, `receive`, `send`, `convert`, `assign`, `export` តាមកម្រិត module។
+
+## ៥.៣ ការពិនិត្យសិទ្ធិ (Permission check)
+
+នៅក្នុង controller/view៖
+
+```php
+if (auth()->user()?->hasPermission('sale.create')) {
+    // …
+}
+```
+
+`User::hasPermission(string $slug): bool` ត្រួតពិនិត្យតាមរយៈ `role_permissions` table ដែលភ្ជាប់នឹង `Role` បច្ចុប្បន្នរបស់អ្នកប្រើ។
+
+## ៥.៤ Multi-Branch Role (`user_branch_roles`)
+
+User មួយអាចមាន role ផ្សេងគ្នាសម្រាប់ sata នីមួយៗ៖
+
+- Default role នៅលើ `users.role_id`
+- Per-branch role override នៅលើ `user_branch_roles(user_id, branch_id, role_id, is_default, is_active)`
+
+ការប្ដូរ branch ត្រូវធ្វើឡើងតាមរយៈ `POST /admin/branch/switch` ដោយផ្ដល់ `branch_id`។ `BranchSwitchController` ផ្ទៀងថាសាខានោះស្ថិតក្នុង company របស់ user ហើយរក្សា `current_branch_id` + `current_branch_name` ក្នុង session។
 
 ---
 
-> **ជំពូកទី ៥ — ការប្រើប្រាស់ប្រចាំថ្ងៃ (Daily Workflow)**
+> **ជំពូកទី ៦ — Module Reference**
 
 ---
 
-## ៥.១ វិធីប្រើប្រាស់មូលដ្ឋាន
+## ៦.១ Dashboard
 
-### ជំហានដំបូងប្រចាំថ្ងៃ
+**URL**: `/admin/dashboard`
+**Controller**: `App\Http\Controllers\Admin\DashboardController` (invokable)
 
-1. **Login** ចូប្រព័ន្ធ
-2. **ជ្រើសរើសសាខា** (Branch Switcher នៅខាងលើអេក្រង់)
-3. **ពិនិត្យ Dashboard** សម្រាប់ស្ថិតិសង្ខេប
+ស្ថិតិដែលបង្ហាញ៖
 
-### ការចុះឈ្មោះសិស្សថ្មី
+- `sales_today` — សរុបនៃ `grand_total` នៃ `sale_invoices` ថ្ងៃនេះ (scope by branch)
+- `sales_count_today` — ចំនួនវិក្កយបត្រលក់ថ្ងៃនេះ
+- `purchases_today` — សរុបនៃ `grand_total` នៃ `purchase_invoices` ថ្ងៃនេះ
+- `product_count`, `customer_count`, `supplier_count`
+- `recentSales`, `recentPurchases` — ៨ វិក្កយបត្រចុងក្រោយ
 
-```
-Students → Create New
-  ├─ បំពេញព័ត៌មានផ្ទាល់ខ្លួន
-  ├─ បំពេញអាសយដ្ឋាន (ខេត្ត → ស្រុក → ឃុំ → ភូមិ)
-  ├─ Upload រូបថត
-  ├─ ភ្ជាប់ Guardian (father/mother/guardian)
-  └─ បង្កើត Card (បើាត្រូវការ)
-      └─ Print Card
-```
+## ៦.២ POS
 
-### ការចុះឈ្មោះចូលថ្នាក់
+**URL**: `/admin/pos`
+**Permissions**: `sale.create`, `sale.view`
 
-```
-Enrollments → Create
-  ├─ ជ្រើសរើសសិស្ស
-  ├─ ជ្រើសរើសថ្នាក់ (Class)
-  ├─ ជ្រើសរើសឆ្នាំសិក្សា
-  ├─ ជ្រើសរើសវេន (Shift)
-  └─ កំណត់ស្ថានភាព: studying
-```
+មុខងារ៖
+- ស្វែងរកផលិតផលដោយ keyword, code, sku, ឬ barcode
+- បន្ថែមទៅកន្ត្រក, កែបរិមាណ និងថ្លៃឯកតា, ដាក់បញ្ចុះតម្លៃក្នុង line
+- ជ្រើស customer (មិនបង្ខំ — អាច Walk-in)
+- ជ្រើស warehouse (default = warehouse `is_default = true` ឬមួយដំបូងនៃ branch)
+- ប្រភេទទូទាត់: `cash` / `bank` / `credit` (string flexible)
+- Calculate subtotal / discount / tax / grand total / change
+- Pay → បង្កើត `sale_invoices`, `sale_items`, `sale_payments`, `stock_movements` ក្នុង transaction
+- Print receipt window ឡើងវិញតាម `printReceipt()`
 
-### ការបង់ថ្លៃសិក្សា
+## ៦.៣ Sales Module
 
-```
-Fees → Invoices → Create
-  ├─ ជ្រើសរើសសិស្ស
-  ├─ បន្ថែម Items (ប្រភេទថ្លៃ + ចំនួន)
-  ├─ រក្សាទុក → Status: unpaid
-  │
-  └─ Payments → Create
-      ├─ ជ្រើសរើស Invoice
-      ├─ បំពេញចំនួនលុយ
-      ├─ ជ្រើស Method (cash/bank/ABA/Wing)
-      └─ Save → តុល្យភាពវិក្កយបត្រត្រូវបាន update ដោយស្វ័យប្រវត្តិ
-```
+| URL | មុខងារ |
+|---|---|
+| `/admin/sale_invoices` | បញ្ជីវិក្កយបត្រលក់ |
+| `/admin/sale_items` | បញ្ជី line items |
+| `/admin/sale_payments` | ការទូទាត់ |
+| `/admin/sale_returns` / `/admin/sale_return_items` | ការប្រគល់ត្រឡប់ |
+| `/admin/quotations` / `/admin/quotation_items` | តម្លៃផ្ដល់ជូន |
 
-### ការបោះពុម្ពកាតសិស្ស
+Sale invoice មាន column សំខាន់ៗ៖ `sale_no`, `sale_date`, `sale_type` (retail/wholesale/project), `status` (draft/completed/cancelled), `payment_status`, `subtotal`, `discount_amount`, `tax_amount`, `transport_fee`, `grand_total`, `paid_amount`, `due_amount`, `change_amount`, `customer_id`, `cashier_id`, `warehouse_id`, `branch_id`, `approved_by`, …
 
-```
-Students → [សិស្ស] → Cards
-  ├─ Create Card → បំពេញថ្ងៃចេញ និងថ្ងៃផុតកំណត់
-  └─ Print → បោះពុម្ពកាតតែមួយ (A4 landscape)
+## ៦.៤ Purchases Module
 
-ឬ
+| URL | មុខងារ |
+|---|---|
+| `/admin/purchase_invoices` | ការទិញចូល |
+| `/admin/purchase_items` | line items |
+| `/admin/purchase_payments` | ការទូទាត់ទៅ supplier |
+| `/admin/purchase_returns` / `/admin/purchase_return_items` | ការត្រឡប់ទៅ supplier |
 
-Student Cards → ជ្រើសរើសច្រើនកាត → Bulk Print → Print ព្រមគ្នា (4 កាត/ទំព័រ)
-```
+Purchase invoice មាន `purchase_no`, `purchase_date`, `received_by`, `supplier_id`, `warehouse_id`, និងស្ថានភាពស្តុក (បាន receive ឬមិនទាន់)។
 
----
+## ៦.៥ Inventory Module
 
-> **ជំពូកទី ៦ — ការគ្រប់គ្រងប្រព័ន្ធ (System Administration)**
+| URL | មុខងារ |
+|---|---|
+| `/admin/stock_balances` | បរិមាណបច្ចុប្បន្នក្នុង warehouse |
+| `/admin/stock_movements` | កំណត់ត្រាចូល-ចេញទាំងអស់ |
+| `/admin/stock_transfers` / `/admin/stock_transfer_items` | ផ្ទេររវាងឃ្លាំង (in/out) |
+| `/admin/stock_adjustments` / `/admin/stock_adjustment_items` | កែតម្រូវចំនួន (gain/loss) |
+| `/admin/damaged_stocks` | ស្តុកខូច / បាត់បង់ |
 
----
+## ៦.៦ Delivery Module
 
-## ៦.១ ការប្ដូរឈ្មោះសាលា និងឡូហ្គូ (Brand Configuration)
+| URL | មុខងារ |
+|---|---|
+| `/admin/deliveries` | គ្រប់គ្រងការដឹក (ភ្ជាប់ sale_invoice + driver + vehicle) |
+| `/admin/delivery_proofs` | រូបភាព/ហត្ថលេខាសន្និដ្ឋាន |
+| `/admin/drivers` | អ្នកបើកបរ |
+| `/admin/vehicles` | យានយន្ត |
+| `/admin/vehicle_expenses` | ចំណាយយានយន្ត |
 
-មានពីររបៀប:
+## ៦.៧ Finance Module
 
-### របៀបទី ១ — Branch Settings (សម្រាប់គ្រប់សាខា)
+| URL | មុខងារ |
+|---|---|
+| `/admin/expenses` | ការចំណាយ |
+| `/admin/expense_categories` | ប្រភេទចំណាយ |
+| `/admin/customer_ledger` | សង្ខេបបញ្ជី customer; `show/{customer}` បង្ហាញលម្អិត |
+| `/admin/customer_ledger_entries` | កំណត់ត្រា debit/credit |
+| `/admin/supplier_ledger` / `/admin/supplier_ledger_entries` | ដូចគ្នាសម្រាប់ supplier |
 
-```
-Branches → [សាខា] → Settings
-```
+## ៦.៨ Reports
 
-បំពេញ:
-- School Name (Khmer / English)
-- Logo path
-- Stamp path
-- Signature path
-- Address, Phone, Email, Website
+| URL | មុខងារ |
+|---|---|
+| `/admin/reports/sales` | តាមរយៈ from/to date — បង្ហាញ invoice + totals |
+| `/admin/reports/stock` | Stock balance របស់ branch បច្ចុប្បន្ន |
+| `/admin/reports/profit` | ផលបូកនៃ `profit_amount` លើ sale items + total sales |
+| `/admin/reports/payable` | Supplier ដែលមាន `current_balance > 0` |
+| `/admin/reports/receivable` | Customer ដែលមាន `current_balance > 0` |
+| `/admin/reports/branch-performance` | សរុបនៃ invoice + sales + profit ក្នុង period តាម branch |
 
-### របៀបទី ២ — Environment File (Global)
+## ៦.៩ Master Data
 
-```env
-# .env
-APP_NAME="SITS Information Technology School"
-APP_NAME_KH="សាលាបច្ចេកវិទ្យាព័ត៌មាន អេស អាយ ធី អេស"
-APP_NAME_EN="SITS INFORMATION TECHNOLOGY SCHOOL"
-```
+| URL | មុខងារ |
+|---|---|
+| `/admin/products` | ផលិតផល (មាន purchase_price, retail_price, wholesale_price, project_price, sku, barcode, minimum_stock, weight, track_stock, allow_negative_stock) |
+| `/admin/categories` | ប្រភេទ (self-referencing parent_id សម្រាប់ hierarchy) |
+| `/admin/brands` | ម៉ាក |
+| `/admin/units` | ឯកតា (មាន base_quantity សម្រាប់ conversion) |
+| `/admin/customers` | អតិថិជន (មាន current_balance, credit_limit) |
+| `/admin/suppliers` | អ្នកផ្គត់ផ្គង់ (មាន current_balance) |
 
-## ៦.២ ការប្ដូរពុម្ពកាត (Customizing Card Template)
+## ៦.១០ Administration
 
-```
-Print Templates → Create / Edit
-  ├─ Name: Default Student Card
-  ├─ Type: student_card
-  ├─ HTML Template: កែ HTML structure
-  ├─ CSS Template: កែ styling
-  └─ Is Default: បើក → ពុម្ពនេះនឹងត្រូវប្រើដោយស្វ័យប្រវត្តិ
-```
-
-> **ចំណាំ**: HTML template ប្រើ `{{ $variable }}` syntax ដូច Blade template។
-
-## ៦.៣ ការបង្កើត Role ថ្មី
-
-```
-Roles → Create
-  ├─ Name: accountant
-  ├─ Display Name: Accountant
-  └─ Permissions: ជ្រើសសិទ្ធដែលត្រូវការ
-      (ឧ. invoices.view, invoices.create, payments.view, payments.create)
-```
-
-## ៦.៤ ការបង្កើត Permission ថ្មី
-
-```
-Permissions → Create
-  ├─ Name: reports.export
-  ├─ Module: reports
-  ├─ Display Name: Export Reports
-  └─ Description: អនុញ្ញាតឲ្យនាំចេញរបាយការណ៍
-```
-
----
-
-> **ជំពូកទី ៧ — ការថែទាំ និងការដោះស្រាយបញ្ហា**
+| URL | មុខងារ |
+|---|---|
+| `/admin/companies` | ក្រុមហ៊ុន — currency, logo, language, tax_number |
+| `/admin/branches` | សាខា |
+| `/admin/warehouses` | ឃ្លាំងតាមសាខា |
+| `/admin/users` | អ្នកប្រើ + role + flags (`can_view_money`, `can_view_profit`, `can_override_credit_limit`) |
+| `/admin/roles` | តួនាទី |
+| `/admin/permissions` | សិទ្ធិ |
+| `/admin/role_permissions` | ភ្ជាប់ role ↔ permission |
+| `/admin/user_branch_roles` | ភ្ជាប់ user ↔ branch ↔ role |
+| `/admin/system_settings` | (only index/edit/update) — key/value, public flag |
+| `/admin/number_sequences` | លេខលំដាប់ឯកសារ (prefix, padding, date_format, suffix) |
+| `/admin/document_templates` | ពុម្ពឯកសារ (invoice/receipt/quotation/delivery) |
+| `/admin/notifications` | សារ in-app |
+| `/admin/attachments` | ឯកសារភ្ជាប់ (polymorphic) |
+| `/admin/audit_logs` | កំណត់ត្រាសកម្មភាព (read-only index) |
+| `/admin/login_histories` | ប្រវត្តិចូលប្រព័ន្ធ (read-only index) |
 
 ---
 
-## ៧.១ Command សំខាន់ៗ (Artisan Commands)
+> **ជំពូកទី ៧ — ការអភិវឌ្ឍន៍បន្ថែម (Extending the System)**
+
+---
+
+## ៧.១ បន្ថែម Module CRUD ថ្មី (Recommended Workflow)
+
+មានសម្រាប់ table ដែលមាន `company_id` រួចហើយ ហើយ field សាមញ្ញ —
+
+1. **Migration**: បន្ថែម `Schema::create('<table>', …)` ទៅ migration `2026_05_13_000000_create_construction_store_all_in_one_schema.php` (ឬបង្កើត migration ថ្មីបើ deploy ហើយ)។
+2. **Model**: បង្កើតក្នុង `app/Models/<Name>.php` — បន្ថែម `$fillable` ឬ `$guarded`, `$casts`, relationships, និង `SoftDeletes` ប្រសិនបើត្រូវការ។
+3. **Controller**: បង្កើតក្នុង `app/Http/Controllers/Admin/<Name>sController.php`៖
+
+   ```php
+   class WidgetsController extends SchemaResourceController
+   {
+       protected string $modelClass = Widget::class;
+       protected string $viewPrefix = 'admin.widgets';
+       protected string $routePrefix = 'admin.widgets';
+
+       public function __construct()
+       {
+           $this->singular = __('admin.menu.widget');
+           $this->pluralLabel = __('admin.menu.widgets');
+       }
+   }
+   ```
+
+4. **Route**: បន្ថែម `Route::resource('widgets', WidgetsController::class);` ទៅ `routes/admin/<group>.php`.
+5. **Sidebar**: បន្ថែម `<li>` ទៅ `resources/views/admin/layouts/admin_partials/left_sidebar.blade.php`.
+6. **Translations**: បន្ថែម keys ទៅ `lang/en/admin.php` និង `lang/km/admin.php` (`menu.widget`, `menu.widgets`)។
+7. **Views**: ប្រសិនបើគ្មាន `admin/widgets/index.blade.php` etc., generic views (`_partials/generic_index.blade.php` + `_partials/generic_form.blade.php` + `_partials/generic_show.blade.php`) នឹងត្រូវបានប្រើដោយស្វ័យប្រវត្តិ។
+8. **Permission**: បន្ថែម entry `widget` ទៅ `PermissionsTableSeeder.php` + assign ទៅ roles via `RolePermissionsTableSeeder.php`.
+9. **Seeder** (optional): បន្ថែម `WidgetsTableSeeder` ហើយ register ក្នុង `DatabaseSeeder::run()`។
+
+## ៧.២ ការបន្ថែម language key
+
+កែទាំងពីរនៃ៖
+- `lang/en/admin.php`
+- `lang/km/admin.php`
+
+ហើយ Inertia នឹង auto-share ទាំងពីរទៅ Vue (`window.__APP_TRANSLATIONS__`)។ Blade ប្រើ `__('admin.<dotted.key>')` បន្ថែម `data-i18n="<dotted.key>"` ដើម្បីឱ្យ JS update ភ្លាមៗដោយមិន reload។
+
+## ៧.៣ ការប្ដូរ logic ស្តុក
+
+រាល់ការផ្លាស់ប្ដូរស្តុកត្រូវ pass through `App\Services\StockService::move()` ដើម្បីរក្សា audit trail ក្នុង `stock_movements` និងធ្វើបច្ចុប្បន្នភាព `stock_balances.average_cost` ត្រឹមត្រូវ។ កុំ update ផ្ទាល់លើ `stock_balances` ដោយខ្លួនឯង។
+
+## ៧.៤ ការប្ដូរលេខលំដាប់ឯកសារ
+
+កែ row ក្នុង `number_sequences` តាមរយៈ `/admin/number_sequences` ឬ seeder។ Field សំខាន់៖
+
+- `document_type` (ឧ. `sale_invoice`, `sale_payment`, `purchase_invoice`)
+- `company_id`, `branch_id` — ដាច់ដោយឡែកសម្រាប់សាខានីមួយៗ
+- `prefix`, `padding`, `suffix`, `date_format` (PHP `now()->format(...)`)
+- `next_number` — counter
+
+`NumberSequenceService::next()` lock row ហើយ increment ដោយ atomic។
+
+---
+
+> **ជំពូកទី ៨ — ការដោះស្រាយបញ្ហា (Troubleshooting)**
+
+---
+
+| ករណី | មូលហេតុ | ដំណោះស្រាយ |
+|---|---|---|
+| `php artisan migrate` បរាជ័យ ដោយ FOREIGN KEY error | Migration ប្រើ `Schema::disableForeignKeyConstraints()` ប៉ុន្តែ DB driver មិនគាំទ្រ | ប្រើ `migrate:fresh` ឬចូល MySQL run `SET FOREIGN_KEY_CHECKS=0` ដោយដៃ |
+| `Class "Database\Seeders\…" not found` | មិនបាន `composer dump-autoload` | `composer dump-autoload` ហើយ run seeder ឡើងវិញ |
+| Vite manifest missing | មិនបាន `npm run build` (សម្រាប់ prod) ឬ `npm run dev` កំពុង run | Run `npm run build` ឬ start `npm run dev` ឱ្យ Vite ផ្ដល់ HMR manifest |
+| `/admin/pos` បង្ហាញ "No branch selected" | Session មិនមាន `current_branch_id` | ចូលក្នុង UI `Switch Branch` (header) ឬ run `migrate:fresh --seed` ឱ្យមាន branch + user.default_branch_id |
+| Translations មិនប្ដូរ | Cache | `php artisan optimize:clear` + reload browser |
+| DataTables មិនបង្ហាញទិន្នន័យ | Yajra package ត្រូវការ `composer require yajra/laravel-datatables-oracle` (តម្លើងស្រាប់) | ត្រួតពិនិត្យ `config/datatables.php` និង controller `dataTableResponse()` |
+| POS checkout 422 "no_branch_selected" | Session loss | Re-login ឬ run `php artisan session:table` + migrate |
+| SQLite "general error: 8 attempt to write a readonly database" | File permissions | `chmod 664 database/database.sqlite && chmod 775 database/` |
+
+## ៨.១ ការ Clear cache
 
 ```bash
-# Clear caches (ប្រសិនបើមានបញ្ហា)
-php artisan cache:clear
+php artisan optimize:clear
+# ឬដាច់ដោយឡែក
 php artisan config:clear
-php artisan view:clear
 php artisan route:clear
-
-# Optimize (បន្ទាប់ពី deploy)
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Database
-php artisan migrate                    # Run migrations
-php artisan migrate:fresh --seed       # Reset DB + seed
-php artisan db:seed --class=UsersSeeder # Seed specific seeder
-
-# Storage link (សម្រាប់ file uploads)
-php artisan storage:link
+php artisan view:clear
+php artisan cache:clear
 ```
 
-## ៧.២ បញ្ហាដែលជួបប្រទះញឹកញាប់
+## ៨.២ ការ Reset database
 
-| បញ្ហា | មូលហេតុ | ដំណោះស្រាយ |
-|---|---|---|
-| **រូបថតមិនបង្ហាញ** | `storage:link` មិនបានធ្វើ | `php artisan storage:link` |
-| **ឡូហ្គូមិនបង្ហាញលើកាត** | គ្មាន `public/images/logo.png` | ដាក់រូបភាព logo ទៅ `public/images/logo.png` |
-| **សិស្សមិនបង្ហាញ** | Branch filter មិនត្រឹមត្រូវ | ពិនិត្យ Branch Switcher នៅខាងលើ |
-| **Permission denied** | Role មិនមានសិទ្ធិ | ពិនិត្យ Role និង Permission |
-| **DataTable error** | Database គ្មានទិន្នន័យ | `php artisan db:seed` |
-| **ទំព័រចុះពណ៌** | npm build មិនបានធ្វើ | `npm run build` |
-
-## ៧.៣ Backup ទិន្នន័យ (Data Backup)
-
-### SQLite
 ```bash
-# Copy database file
-copy database\database.sqlite database\database_backup_YYYYMMDD.sqlite
+php artisan migrate:fresh --seed --force
 ```
 
-### MySQL
-```bash
-mysqldump -u root -p student_profile_db > backup_YYYYMMDD.sql
-```
+> ⚠️ ការនេះនឹង **លុបទិន្នន័យទាំងអស់** ហើយ seed ឡើងវិញ។ កុំ run នៅលើ production!
 
 ---
 
-> **ជំពូកទី ៨ — សង្ខេប URL Routes**
+> **ជំពូកទី ៩ — ឯកសារយោង (References)**
 
 ---
 
-## តារាង URL សំខាន់ៗ
-
-| មុខងារ | URL | ទំព័រ |
-|---|---|---|
-| ផ្ទាំងគ្រប់គ្រង | `/dashboard` | Dashboard |
-| សិស្ស | `/admin/students` | បញ្ជីសិស្ស |
-| បង្កើតសិស្ស | `/admin/students/create` | Form បង្កើត |
-| កាតសិស្សសកល | `/admin/student-cards` | Global card list |
-| Bulk Print | `/admin/student-cards/bulk-print` | Print ច្រើនកាត |
-| វិក្កយបត្រ | `/admin/fees/invoices` | បញ្ជីវិក្កយបត្រ |
-| ទូទាត់ | `/admin/fees/payments` | បញ្ជីការទូទាត់ |
-| របាយការណ៍ | `/admin/reports` | ផ្ទាំងរបាយការណ៍ |
-| អ្នកប្រើ | `/admin/users` | គ្រប់គ្រងអ្នកប្រើ |
-| សាខា | `/admin/branches` | គ្រប់គ្រងសាខា |
+- **Laravel 12 Documentation** — <https://laravel.com/docs/12.x>
+- **Inertia.js** — <https://inertiajs.com>
+- **Ziggy** — <https://github.com/tighten/ziggy>
+- **Yajra DataTables** — <https://yajrabox.com/docs/laravel-datatables>
+- **PHP-Flasher** — <https://php-flasher.io>
+- **SweetAlert2** — <https://sweetalert2.github.io>
+- **Vue 3** — <https://vuejs.org>
+- **vue-i18n** — <https://vue-i18n.intlify.dev>
+- **Bootstrap 5** — <https://getbootstrap.com>
+- **Tom Select** — <https://tom-select.js.org>
+- **Flatpickr** — <https://flatpickr.js.org>
 
 ---
 
-> **ជំពូកទី ៩ — ការអភិវឌ្ឍបន្ត (Development Guide)**
+## សេចក្ដីសរុប (Conclusion)
 
----
+ឯកសារនេះគ្របដណ្ដប់៖
+- ទិដ្ឋភាពទូទៅ និងបច្ចេកវិទ្យារបស់ **Construction Store Management System with POS**
+- ការដំឡើង និងគណនី demo
+- រចនាសម្ព័ន្ធ database 51 តារាង និងទំនាក់ទំនង
+- រចនាសម្ព័ន្ធ application (routes, middleware, controllers, POS island, StockService)
+- សិទ្ធិ និងតួនាទី
+- Module reference ដែលអាចប្រើជា bookmark
+- របៀបបន្ថែម module ថ្មី និងដោះស្រាយបញ្ហាទូទៅ
 
-## ៩.១ របៀបបន្ថែម Module ថ្មី
-
-ប្រសិនបើចង់បន្ថែមមុខងារថ្មី:
-
-1. **Create Migration**: បន្ថែម table ទៅ `database/migrations/...`
-2. **Create Model**: `php artisan make:model NewModel`
-3. **Create Controller**: `php artisan make:controller NewModelController`
-4. **Create Routes**: បន្ថែមទៅ `routes/web.php`
-5. **Create Views**: បង្កើត folder ក្នុង `resources/views/admin/...`
-6. **Add Permissions**: បន្ថែមទៅ `RolesPermissionsSeeder`
-7. **Seed Data**: បង្កើត Seeder បើាត្រូវការទិន្នន័យគំរូ
-
-## ៩.២ គោលការសុវត្ថិភាព (Security)
-
-- **CSRF Protection**: Laravel Breeze មានរួចជាស្រេច
-- **Authorization**: `can:module.action` middleware គ្រប់ routes
-- **Password Hashing**: bcrypt hashing ដោយស្វ័យប្រវត្តិ
-- **Soft Deletes**: មិនលុបពិតប្រាកដ — recoverable
-- **Audit Trail**: គ្រប់ create/update/delete ត្រូវបានកត់ត្រា
-
----
-
-> **ជំពូកទី ១០ — ព័ត៌មានទំនាក់ទំនង**
-
----
-
-## ឯកសារយោង (References)
-
-- **Laravel Docs**: https://laravel.com/docs/12.x
-- **TailwindCSS**: https://tailwindcss.com/docs
-- **AlpineJS**: https://alpinejs.dev
-- **Yajra DataTables**: https://yajrabox.com/docs/laravel-datatables
-
-## អ្នកអភិវឌ្ឍ (Developer Notes)
-
-ប្រព័ន្ធនេះត្រូវបានបង្កើតឡើងសម្រាប់គ្រប់គ្រងព័ត៌មានសិស្សពេញលេញ ដោយប្រើ Laravel Framework ជំនាន់ចុងក្រោយ។ ប្រសិនបើមានសំណួរ ឬបញ្ហាណាមួយ សូមពិនិត្យ Log files ក្នុង `storage/logs/` ឬមើល Audit Logs នៅក្នុងប្រព័ន្ធ។
-
----
-
-**សង្ខេបការប្រើប្រាស់រហ័ស (Quick Start Checklist)**
-
-- [ ] Clone Project
-- [ ] `composer install`
-- [ ] `npm install && npm run build`
-- [ ] Copy `.env.example` → `.env`
-- [ ] `php artisan key:generate`
-- [ ] Create database file
-- [ ] `php artisan migrate`
-- [ ] `php artisan db:seed`
-- [ ] `php artisan storage:link`
-- [ ] Login with `admin@sits.edu.kh` / `password`
-- [ ] Switch to correct branch
-- [ ] Upload logo to `public/images/logo.png`
-- [ ] Ready to use!
-
----
-
-*ឯកសារនេះត្រូវបានបង្កើតឡើងដោយស្វ័យប្រវត្តិពី Project Audit — ថ្ងៃទី ៥ ឧសភា ២០២៦*
+សម្រាប់សំណួរបច្ចេកទេស ឬដើម្បីបន្ថែម feature ថ្មី សូមផ្ដើមដោយការអាន `README.md` និងឯកសារនេះ ហើយប្រើ `BaseCrudController` / `SchemaResourceController` ដើម្បីសន្សំការសរសេរ code។
