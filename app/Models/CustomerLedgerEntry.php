@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class CustomerLedgerEntry extends Model
 {
@@ -34,14 +35,13 @@ class CustomerLedgerEntry extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function saleInvoice(): BelongsTo
+    /**
+     * The source document for this ledger entry (sale invoice, sale payment, sale return, etc.)
+     * via the polymorphic `reference_type` + `reference_id` columns.
+     */
+    public function reference(): MorphTo
     {
-        return $this->belongsTo(SaleInvoice::class);
-    }
-
-    public function salePayment(): BelongsTo
-    {
-        return $this->belongsTo(SalePayment::class);
+        return $this->morphTo();
     }
 
     public function createdBy(): BelongsTo
